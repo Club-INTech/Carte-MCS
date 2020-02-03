@@ -25,6 +25,9 @@ using namespace I2CC;
 
 // TODO : Tout docu
 // TODO : P'tet passer les config dans un fichier dans src/Config ?
+
+
+
 class MCS : public Singleton<MCS>
 {
 
@@ -113,7 +116,7 @@ public:
     /**
      * Méthode appelée par un InterruptTimer afin d'envoyer au HL la position du robot
      */
-    void sendPositionUpdate();
+    void sendPositionUpdate(BufferedData*);
 
     /**
      * Reset des codeuses, utilisé quand le HL reset la position du robot (grâce aux SICK par exemple)

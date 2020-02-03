@@ -29,7 +29,24 @@ BufferedData* gotoPoint(BufferedData& args){
 
 }
 
+BufferedData* stop(BufferedData& args){
 
+
+    MCS::Instance().stop();
+
+    return nullptr;
+}
+// quand le master appelle stop, le returnData se rempli en fonction des cas (robotStuck...) et on renvoie le returnData plein au master
+// normalement j'ai changé le mcs.h aussi
+
+
+BufferedData* sendPositionUpdate(BufferedData& args){
+
+    BufferedData* returnData = new BufferedData(sizeof(float)*3 + 4);
+    MCS::Instance().sendPositionUpdate(returnData);
+
+    return returnData;
+}
 
 
 
@@ -37,6 +54,8 @@ BufferedData* gotoPoint(BufferedData& args){
 
 void setup(){
     registerRPC(gotoPoint,1);
+    registerRPC(stop,2);
+    registerRPC(sendPositionUpdate,3);
 
     startI2CC(1);  // Does not return, so the loop() is useless, id mcs=1
 }

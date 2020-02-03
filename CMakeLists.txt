@@ -6,7 +6,7 @@
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
 cmake_minimum_required(VERSION 3.2)
-project("I2C-Callables")
+project("Carte-MCS")
 
 include(CMakeListsPrivate.txt)
 
