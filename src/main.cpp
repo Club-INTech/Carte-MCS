@@ -21,6 +21,7 @@
 #define USE_TIMER_5     false
 
 #include "TimerInterrupt.h"
+#include "Arduino.h"
 
 using namespace I2CC;
 
@@ -180,14 +181,28 @@ BufferedData* getTicks(BufferedData& args){
     return returnData;
 }
 
-
 void ControlInterruptHandler() {
     MCS::Instance().control();
 }
 
+void TickLeftEncoder() {
+    MCS::Instance().tickLeftEncoder();
+}
+
+void TickRightEncoder() {
+    MCS::Instance().tickRightEncoder();
+}
+
 void setup(){
+    // TODO: pinModes
     ITimer1.init();
     ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
+
+    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), TickLeftEncoder, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_B), TickLeftEncoder, CHANGE);
+
+    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), TickRightEncoder, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_B), TickRightEncoder, CHANGE);
 
     registerRPC(gotoPoint,1);
     registerRPC(stop,2);
@@ -209,9 +224,8 @@ void setup(){
     registerRPC(getTicks,18);
 
 
-
-
-    startI2CC(1);  // Does not return, so the loop() is useless, id mcs=1
+    startI2CC(1);
+    // Does not return, so the loop() is useless, id mcs=1
 }
 
 void loop(){}

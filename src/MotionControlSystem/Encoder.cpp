@@ -5,14 +5,17 @@
 #include "Encoder.h"
 
 Encoder::Encoder(int pin1, int pin2) {
-
+    backingEncoder = new RotaryEncoder(pin1, pin2);
 }
 
 int32_t Encoder::read() {
-    //TODO
-    return 1;
+    return backingEncoder->getPosition();
 }
 
 void Encoder::write(int val_reset) {
-    //TODO
+    backingEncoder->setPosition(val_reset);
+}
+
+void Encoder::tick() {
+    backingEncoder->tick();
 }

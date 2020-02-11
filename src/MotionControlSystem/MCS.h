@@ -154,6 +154,9 @@ public:
     bool sentMoveAbnormal();
     bool isMoveAbnormal();
     void setMoveAbnormalSent(bool);
+
+    void tickLeftEncoder();
+    void tickRightEncoder();
 };
 
 #endif //LL_MCSREBORN_H

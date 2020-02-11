@@ -626,3 +626,11 @@ bool MCS::isMoveAbnormal() {
 void MCS::setMoveAbnormalSent(bool val) {
     robotStatus.sentMoveAbnormal = val;
 }
+
+void MCS::tickLeftEncoder() {
+    encoderLeft->tick();
+}
+
+void MCS::tickRightEncoder() {
+    encoderRight->tick();
+}
