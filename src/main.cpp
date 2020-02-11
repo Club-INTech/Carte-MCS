@@ -12,6 +12,16 @@
 
 #include "MotionControlSystem/MCS.h"
 
+#define TIMER_INTERRUPT_DEBUG      0
+
+#define USE_TIMER_1     true
+#define USE_TIMER_2     false
+#define USE_TIMER_3     false
+#define USE_TIMER_4     false
+#define USE_TIMER_5     false
+
+#include "TimerInterrupt.h"
+
 using namespace I2CC;
 
 
@@ -171,9 +181,14 @@ BufferedData* getTicks(BufferedData& args){
 }
 
 
-
+void ControlInterruptHandler() {
+    MCS::Instance().control();
+}
 
 void setup(){
+    ITimer1.init();
+    ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
+
     registerRPC(gotoPoint,1);
     registerRPC(stop,2);
     registerRPC(sendPositionUpdate,3);
