@@ -310,7 +310,6 @@ void MCS::stop() {
         robotStatus.inRotationInGoto = false;
         robotStatus.notMoving = MovementStatus::UNABLE_TO_MOVE;
 
-        //TODO COM NEW LIB InterruptStackPrint::Instance().push(EVENT_HEADER,"unableToMove");
 
         robotStatus.notMoving=UNABLE_TO_MOVE;
     }
@@ -325,13 +324,11 @@ void MCS::stop() {
             rightSpeedPID.resetErrors();
 
             gotoPoint2(targetX,targetY, nullptr);
-            // TODO COM NEW LIB InterruptStackPrint::Instance().push(EVENT_HEADER, "renvoie un goto");
             robotStatus.notMoving=RETRY_GOTO;
             shouldResetP2P = false;
 
         }
         else {
-           // TODO COM NEW LIB InterruptStackPrint::Instance().push(EVENT_HEADER, "stoppedMoving");
             robotStatus.notMoving=STOPPED_MOVING;
             robotStatus.inGoto=false;
             leftSpeedPID.setGoal(0);
@@ -450,10 +447,8 @@ void MCS::gotoPoint2(int16_t x, int16_t y, BufferedData* returnData) {
 //    digitalWrite(LED2,LOW);
     float dx = x-robotStatus.x;
     float dy = y-robotStatus.y;
-    // TODO NEW COM LIB ComMgr::Instance().printfln(DEBUG_HEADER, "goto %i %i (diff is %f %f) x= %f; y= %f", x, y, dx, dy, robotStatus.x, robotStatus.y);
 
     float rotation = atan2f(dy, dx);
-    // TODO NEW COM LIB ComMgr::Instance().printfln(DEBUG_HEADER, "Required angle: %f", rotation);
 
     if (returnData) {
         sprintf((char*)returnData->dataArray, "goto %i %i (diff is %f %f) x= %f; y= %f; angle=%f", x, y, dx, dy, robotStatus.x, robotStatus.y, rotation);
@@ -516,7 +511,6 @@ void MCS::sendPositionUpdate(BufferedData* returnData) {
      putData<uint32_t>(millis(), returnData);
      putData<uint8_t>(robotStatus.notMoving,returnData);
 
-    // TODO NEW COM LIB ComMgr::Instance().printfln(POSITION_HEADER, "%f %f %f %li", robotStatus.x, robotStatus.y, robotStatus.orientation, millis());
 }
 
 void MCS::resetEncoders() {

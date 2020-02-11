@@ -48,6 +48,127 @@ BufferedData* sendPositionUpdate(BufferedData& args){
     return returnData;
 }
 
+BufferedData* translate(BufferedData& args){
+    int16_t distance;
+    getData<int16_t >(distance, &args);
+    MCS::Instance().translate(distance);
+    return nullptr;
+}
+
+BufferedData* rotate(BufferedData& args){
+    float angle;
+    getData<float >(angle, &args);
+    MCS::Instance().rotate(angle);
+    return nullptr;
+}
+
+BufferedData* setXYO(BufferedData& args){
+    float x;
+    float y;
+    float o;
+    getData<float >(x,&args);
+    getData<float >(y,&args);
+    getData<float >(o,&args);
+    MCS::Instance().setX(x);
+    MCS::Instance().setY(y);
+    MCS::Instance().setAngle(o);
+    MCS::Instance().setAngleOffset(o);
+    MCS::Instance().resetEncoders();
+    return nullptr;
+}
+
+BufferedData* setTranslationSpeed(BufferedData& args){
+    float speed;
+    getData<float>(speed,&args);
+    MCS::Instance().setTranslationSpeed(speed);
+    return nullptr;
+}
+
+BufferedData* setRotationSpeed(BufferedData& args){
+    float speed;
+    getData<float>(speed,&args);
+    MCS::Instance().setRotationSpeed(speed);
+    return nullptr;
+}
+
+BufferedData* changeTranslationControlState(BufferedData& args){
+    bool state;
+    getData<bool>(state,&args);
+    MCS::Instance().controlledTranslation(state);
+    return nullptr;
+}
+
+BufferedData* changeRotationControlState(BufferedData& args){
+    bool state;
+    getData<bool>(state,&args);
+    MCS::Instance().controlledRotation(state);
+    return nullptr;
+}
+
+BufferedData* changeForcedMovement(BufferedData& args){
+    bool state;
+    getData<bool>(state,&args);
+    MCS::Instance().setForcedMovement(state);
+    return nullptr;
+}
+
+BufferedData* goForward(BufferedData& args){
+    MCS::Instance().speedBasedMovement(MOVEMENT::FORWARD);
+    return nullptr;
+}
+
+BufferedData* goBackward(BufferedData& args){
+    MCS::Instance().speedBasedMovement(MOVEMENT::BACKWARD);
+    return nullptr;
+}
+
+BufferedData* turnRight(BufferedData& args){
+    MCS::Instance().speedBasedMovement(MOVEMENT::ANTITRIGO);
+    return nullptr;
+}
+
+BufferedData* turnLeft(BufferedData& args){
+    MCS::Instance().speedBasedMovement(MOVEMENT::TRIGO);
+    return nullptr;
+}
+
+BufferedData* changeControlState(BufferedData& args){
+    bool state;
+    getData<bool>(state,&args);
+    MCS::Instance().setControl(state);
+    return nullptr;
+}
+
+BufferedData* getRawPosData(BufferedData& args){
+    int16_t x = MCS::Instance().getX();
+    int16_t y = MCS::Instance().getY();
+    float angle= MCS::Instance().getAngle();
+    float leftSpeed= MCS::Instance().getLeftSpeed();
+    float rightSpeed= MCS::Instance().getRightSpeed();
+    long leftSpeedGoal;
+    long rightSpeedGoal;
+    MCS::Instance().getSpeedGoals(leftSpeedGoal,rightSpeedGoal);
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2+ sizeof(float)*3+ sizeof(long)*2);
+    putData(x,returnData);
+    putData(y,returnData);
+    putData(angle,returnData);
+    putData(leftSpeed,returnData);
+    putData(leftSpeedGoal,returnData);
+    putData(rightSpeed,returnData);
+    putData(rightSpeedGoal,returnData);
+
+    return returnData;
+
+}
+
+BufferedData* getTicks(BufferedData& args){
+    long leftTicks = MCS::Instance().getLeftTicks();
+    long rightTicks = MCS::Instance().getRightTicks();
+    BufferedData* returnData = new BufferedData(sizeof(long)*2);
+    putData(leftTicks,returnData);
+    putData(rightTicks,returnData);
+    return returnData;
+}
 
 
 
@@ -56,6 +177,24 @@ void setup(){
     registerRPC(gotoPoint,1);
     registerRPC(stop,2);
     registerRPC(sendPositionUpdate,3);
+    registerRPC(translate,4);
+    registerRPC(rotate,5);
+    registerRPC(setXYO,6);
+    registerRPC(setTranslationSpeed,7);
+    registerRPC(setRotationSpeed,8);
+    registerRPC(changeTranslationControlState,9);
+    registerRPC(changeRotationControlState,10);
+    registerRPC(changeForcedMovement,11);
+    registerRPC(goForward,12);
+    registerRPC(goBackward,13);
+    registerRPC(turnLeft,14);
+    registerRPC(turnRight,15);
+    registerRPC(changeControlState,16);
+    registerRPC(getRawPosData,17);
+    registerRPC(getTicks,18);
+
+
+
 
     startI2CC(1);  // Does not return, so the loop() is useless, id mcs=1
 }
