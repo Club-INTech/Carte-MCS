@@ -37,9 +37,8 @@ class Motor {
 private:
 	Side side;
 	Direction direction;
-	uint8_t pin_pwm;
-	uint8_t pin_ina;
-	uint8_t pin_inb;
+	uint8_t pin_fin;
+	uint8_t pin_bin;
 public:
 	Motor(Side);
 	int16_t pwm;
@@ -53,7 +52,6 @@ public:
 	 * C'est juste mettre le PWM à 0 mais c'est plus propre niveau code :)
 	 */
 	void stop();
-	void brake();
 };
 
 #endif //COMPLETE_LOW_LEVEL_MOTOR_H
