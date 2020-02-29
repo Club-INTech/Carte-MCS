@@ -74,11 +74,11 @@ BufferedData* rotate(BufferedData& args){
 }
 
 BufferedData* setXYO(BufferedData& args){
-    float x;
-    float y;
+    int16_t x;
+    int16_t y;
     float o;
-    getData<float >(x,&args);
-    getData<float >(y,&args);
+    getData<int16_t>(x,&args);
+    getData<int16_t >(y,&args);
     getData<float >(o,&args);
     MCS::Instance().setX(x);
     MCS::Instance().setY(y);
@@ -143,6 +143,11 @@ BufferedData* turnLeft(BufferedData& args){
     return nullptr;
 }
 
+BufferedData* sstop(BufferedData& args){
+    MCS::Instance().speedBasedMovement(MOVEMENT::NONE);
+    return nullptr;
+}
+
 BufferedData* changeControlState(BufferedData& args){
     bool state;
     getData<bool>(state,&args);
@@ -173,11 +178,11 @@ BufferedData* getRawPosData(BufferedData& args){
 }
 
 BufferedData* getTicks(BufferedData& args){
-    long leftTicks = MCS::Instance().getLeftTicks();
-    long rightTicks = MCS::Instance().getRightTicks();
-    BufferedData* returnData = new BufferedData(sizeof(long)*2);
-    putData(leftTicks,returnData);
-    putData(rightTicks,returnData);
+    int32_t leftTicks = MCS::Instance().getLeftTicks();
+    int32_t rightTicks = MCS::Instance().getRightTicks();
+    BufferedData* returnData = new BufferedData(sizeof(int32_t)*2);
+    putData<int32_t>(leftTicks,returnData);
+    putData<int32_t>(rightTicks,returnData);
     return returnData;
 }
 
@@ -222,6 +227,7 @@ void setup(){
     registerRPC(changeControlState,16);
     registerRPC(getRawPosData,17);
     registerRPC(getTicks,18);
+    registerRPC(sstop,19);
 
 
     startI2CC(1);
