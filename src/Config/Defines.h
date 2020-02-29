@@ -4,7 +4,6 @@
 #define _DEFINES_h
 
 #include <Arduino.h>
-#include "ComOptions.h"
 
 /**
 *COMMUNICATION
