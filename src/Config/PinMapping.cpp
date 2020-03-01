@@ -7,7 +7,7 @@
 #if defined(MAIN)
 
 void InitAllPins() {
-    // Jumper
+  /*  // Jumper
     pinMode(PIN_JMPR, INPUT_PULLUP);
 
     // Moteurs
@@ -54,7 +54,7 @@ void InitAllPins() {
     pinMode(LED3,OUTPUT);
     digitalWrite(LED3,LOW);
     pinMode(LED4,OUTPUT);
-    digitalWrite(LED4,LOW);
+    digitalWrite(LED4,LOW);*/
 }
 
 #elif defined(SLAVE)

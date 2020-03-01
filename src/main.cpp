@@ -25,6 +25,15 @@
 
 using namespace I2CC;
 
+// TODO: Ne pas utiliser de new pour les buffers
+BufferedData* ping(BufferedData& args){
+    BufferedData* returnData = new BufferedData(sizeof(char)*4);
+    putData<char>('p', returnData);
+    putData<char>('o', returnData);
+    putData<char>('n', returnData);
+    putData<char>('g', returnData);
+    return returnData;
+}
 
 BufferedData* gotoPoint(BufferedData& args){
 
@@ -165,13 +174,14 @@ BufferedData* getRawPosData(BufferedData& args){
     long rightSpeedGoal;
     MCS::Instance().getSpeedGoals(leftSpeedGoal,rightSpeedGoal);
     BufferedData* returnData = new BufferedData(sizeof(int16_t)*2+ sizeof(float)*3+ sizeof(long)*2);
-    putData(x,returnData);
-    putData(y,returnData);
-    putData(angle,returnData);
-    putData(leftSpeed,returnData);
-    putData(leftSpeedGoal,returnData);
-    putData(rightSpeed,returnData);
-    putData(rightSpeedGoal,returnData);
+    returnData->rewind();
+    putData<int16_t>(x,returnData);
+    putData<int16_t>(y,returnData);
+    putData<float>(angle,returnData);
+    putData<float>(leftSpeed,returnData);
+    putData<long>(leftSpeedGoal,returnData);
+    putData<float>(rightSpeed,returnData);
+    putData<long>(rightSpeedGoal,returnData);
 
     return returnData;
 
@@ -186,29 +196,56 @@ BufferedData* getTicks(BufferedData& args){
     return returnData;
 }
 
+BufferedData* getXYO(BufferedData& args) {
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2 + sizeof(float));
+    putData<int16_t>(MCS::Instance().getX(), returnData);
+    putData<int16_t>(MCS::Instance().getY(), returnData);
+    putData<float>(MCS::Instance().getAngle(), returnData);
+    return returnData;
+}
+
 void ControlInterruptHandler() {
     MCS::Instance().control();
 }
 
 void TickLeftEncoder() {
-    MCS::Instance().tickLeftEncoder();
+    //MCS::Instance().tickLeftEncoder();
 }
 
 void TickRightEncoder() {
+    //MCS::Instance().tickRightEncoder();
+}
+
+ISR(PCINT1_vect) {
+
+}
+
+ISR(PCINT2_vect) {
+/*    digitalWrite(A0, LOW);
+    digitalWrite(A1, LOW);*/
+    MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
 }
 
 void setup(){
+    MCS::Instance().init();
+    pinMode(A0, OUTPUT);
+    pinMode(A1, OUTPUT);
+
+
+    PCICR |= (1 << PCIE2);    // This enables Pin Change Interrupt 1 that covers the Analog input pins or Port C.
+    PCMSK1 |= (1 << PCINT18) | (1 << PCINT19);  // This enables the interrupt for pin 2 and 3 of Port C.
+    PCMSK2 |= (1 << PCINT23) | (1 << PCINT20);  // This enables the interrupt for pin 2 and 3 of Port C.
+
+    digitalWrite(A0, HIGH);
+    digitalWrite(A1, HIGH);
+//    digitalWrite(A0, LOW);
+//    digitalWrite(A1, LOW);
     // TODO: pinModes
     ITimer1.init();
     ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
 
-    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A), TickLeftEncoder, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_B), TickLeftEncoder, CHANGE);
-
-    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A), TickRightEncoder, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_B), TickRightEncoder, CHANGE);
-
+    registerRPC(ping,0);
     registerRPC(gotoPoint,1);
     registerRPC(stop,2);
     registerRPC(sendPositionUpdate,3);
@@ -228,13 +265,15 @@ void setup(){
     registerRPC(getRawPosData,17);
     registerRPC(getTicks,18);
     registerRPC(sstop,19);
+    registerRPC(getXYO,21);
 
 
-    startI2CC(1);
+    startI2CC(1, true);
     // Does not return, so the loop() is useless, id mcs=1
 }
 
-void loop(){}
+void loop(){
+}
 
                    /*``.           `-:--.`
                   `.-::::/.        .:::::::y

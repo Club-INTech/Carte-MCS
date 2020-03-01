@@ -2,9 +2,10 @@
 // Created by serandour on 03/10/2019.
 //
 
+#include <Config/PinMapping.h>
 #include "Encoder.h"
 
-Encoder::Encoder(int pin1, int pin2) {
+Encoder::Encoder(int pin1, int pin2): leftPin(pin1), rightPin(pin2) {
     backingEncoder = new RotaryEncoder(pin1, pin2);
 }
 
@@ -17,5 +18,6 @@ void Encoder::write(int val_reset) {
 }
 
 void Encoder::tick() {
+    int32_t prev = read();
     backingEncoder->tick();
 }

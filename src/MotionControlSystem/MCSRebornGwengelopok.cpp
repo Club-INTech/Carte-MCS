@@ -7,14 +7,6 @@
 
 MCS::MCS(): leftMotor(Side::LEFT), rightMotor(Side::RIGHT)  {
 
-#if defined(MAIN)
-    encoderLeft = new Encoder(ENCODER_LEFT_B,ENCODER_LEFT_A);
-    encoderRight = new Encoder(ENCODER_RIGHT_B,ENCODER_RIGHT_A);
-#elif defined(SLAVE)
-    encoderLeft = new Encoder(ENCODER_LEFT_A,ENCODER_LEFT_B);
-    encoderRight = new Encoder(ENCODER_RIGHT_A,ENCODER_RIGHT_B);
-#endif
-
     initSettings();
     initStatus();
     // FIXME : ? Duplication de ce que fait initStatus ?
@@ -108,6 +100,9 @@ void MCS::initSettings() {
 }
 
 void MCS::initStatus() {
+    robotStatus.x = 0;
+    robotStatus.y = 0;
+    robotStatus.orientation = 0.0;
     robotStatus.movement = MOVEMENT::NONE;
     robotStatus.notMoving = MovementStatus::STOPPED_MOVING;
     robotStatus.inRotationInGoto = false;
@@ -195,8 +190,8 @@ void MCS::control()
     if(!robotStatus.controlled)
         return;
 
-    leftTicks = encoderLeft->read();
-    rightTicks = encoderRight->read();
+    leftTicks = encoderLeft.read();
+    rightTicks = encoderRight.read();
 
     updatePositionOrientation();
 
@@ -211,7 +206,7 @@ void MCS::control()
     previousRightTicks = rightTicks;
 
 #if defined(MAIN)
-    digitalWrite(LED3, robotStatus.notMoving);
+//    digitalWrite(LED3, robotStatus.notMoving);
 #elif defined(SLAVE)
     digitalWrite(LED3_2, !robotStatus.notMoving);
 #endif
@@ -516,8 +511,8 @@ void MCS::sendPositionUpdate(BufferedData* returnData) {
 void MCS::resetEncoders() {
     leftTicks = 0;
     rightTicks = 0;
-    encoderLeft->write(0);
-    encoderRight->write(0);
+    encoderLeft.write(0);
+    encoderRight.write(0);
     previousLeftTicks = 0;
     previousRightTicks = 0;
     currentDistance = 0;
@@ -628,9 +623,9 @@ void MCS::setMoveAbnormalSent(bool val) {
 }
 
 void MCS::tickLeftEncoder() {
-    encoderLeft->tick();
+    encoderLeft.tick();
 }
 
 void MCS::tickRightEncoder() {
-    encoderRight->tick();
+    encoderRight.tick();
 }

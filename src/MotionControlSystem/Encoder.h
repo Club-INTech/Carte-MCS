@@ -11,6 +11,8 @@ class Encoder {
 
 private:
     RotaryEncoder* backingEncoder;
+    int leftPin;
+    int rightPin;
 
 public:
     Encoder(int pin1, int pin2);

@@ -33,8 +33,8 @@ class MCS : public Singleton<MCS>
 
 private:
 
-    Encoder* encoderRight = nullptr;
-    Encoder* encoderLeft = nullptr;
+    Encoder encoderLeft = Encoder(ENCODER_LEFT_A,ENCODER_LEFT_B);
+    Encoder encoderRight = Encoder(ENCODER_RIGHT_B,ENCODER_RIGHT_A);
 
     RobotStatus robotStatus;
     ControlSettings controlSettings;
