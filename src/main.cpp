@@ -268,11 +268,15 @@ void setup(){
     registerRPC(getXYO,21);
 
 
-    startI2CC(1, true);
+    startI2CC(1, false);
     // Does not return, so the loop() is useless, id mcs=1
 }
 
 void loop(){
+    digitalWrite(A0, LOW);
+    delay(500);
+    digitalWrite(A0, HIGH);
+    delay(500);
 }
 
                    /*``.           `-:--.`
