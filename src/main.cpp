@@ -273,10 +273,16 @@ void setup(){
 }
 
 void loop(){
-    digitalWrite(A0, LOW);
+/*    digitalWrite(A0, LOW);
     delay(500);
     digitalWrite(A0, HIGH);
     delay(500);
+*/
+//    analogWrite(INA_LEFT, 128); //ok
+    analogWrite(INB_LEFT, 255); //nok
+    // analogWrite(INA_RIGHT, 128); //nok
+    //analogWrite(INB_RIGHT, 128); //nok
+    delay(1);
 }
 
                    /*``.           `-:--.`

@@ -208,7 +208,7 @@ void MCS::control()
 #if defined(MAIN)
 //    digitalWrite(LED3, robotStatus.notMoving);
 #elif defined(SLAVE)
-    digitalWrite(LED3_2, !robotStatus.notMoving);
+//    digitalWrite(LED3_2, !robotStatus.notMoving);
 #endif
 
     if(gotoTimer > 0)
@@ -253,11 +253,6 @@ void MCS::manageStop() {
             timeCounter = 0;
             robotStatus.stuck = true;
 //            InterruptStackPrint::Instance().push("blocage symétrique");
-#if defined(SLAVE)
-            digitalWrite(LED3_1, LOW);
-            digitalWrite(LED3_2, HIGH);
-            digitalWrite(LED3_3, HIGH);
-#endif
             stop();
         }
         timeCounter++;
@@ -273,9 +268,9 @@ void MCS::manageStop() {
         stop();
         robotStatus.stuck=true;
 #if defined(MAIN)
-        digitalWrite(LED4,HIGH);
+        //digitalWrite(LED4,HIGH);
 #elif defined(SLAVE)
-        digitalWrite(LED3_1,LOW);
+        //digitalWrite(LED3_1,LOW);
 #endif
 
     }
@@ -288,9 +283,9 @@ void MCS::manageStop() {
 
 void MCS::stop() {
 #if defined(MAIN)
-    digitalWrite(LED2,HIGH);
+    //digitalWrite(LED2,HIGH);
 #elif defined(SLAVE)
-    digitalWrite(LED2_1,LOW);
+    //digitalWrite(LED2_1,LOW);
 #endif
     leftMotor.stop();
     rightMotor.stop();
@@ -361,9 +356,9 @@ void MCS::translate(int16_t amount) {
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
 #if defined(MAIN)
-    digitalWrite(LED2,LOW);
+    //digitalWrite(LED2,LOW);
 #elif defined(SLAVE)
-    digitalWrite(LED2_1,HIGH);
+    //digitalWrite(LED2_1,HIGH);
 #endif
 }
 
@@ -421,9 +416,9 @@ void MCS::rotate(float angle) {
     rotationPID.setGoal(targetAngle);
     robotStatus.notMoving = MovementStatus::MOVING;
 #if defined(MAIN)
-    digitalWrite(LED2,LOW);
+    //digitalWrite(LED2,LOW);
 #elif defined(SLAVE)
-    digitalWrite(LED2_1,LOW);
+    //digitalWrite(LED2_1,LOW);
 #endif
 }
 
