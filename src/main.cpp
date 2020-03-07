@@ -228,6 +228,7 @@ ISR(PCINT2_vect) {
 }
 
 void setup(){
+    InitAllPins();
     MCS::Instance().init();
     pinMode(A0, OUTPUT);
     pinMode(A1, OUTPUT);
@@ -268,7 +269,7 @@ void setup(){
     registerRPC(getXYO,21);
 
 
-    startI2CC(1, false);
+    startI2CC(1, true);
     // Does not return, so the loop() is useless, id mcs=1
 }
 
@@ -278,10 +279,19 @@ void loop(){
     digitalWrite(A0, HIGH);
     delay(500);
 */
-//    analogWrite(INA_LEFT, 128); //ok
-    analogWrite(INB_LEFT, 255); //nok
-    // analogWrite(INA_RIGHT, 128); //nok
-    //analogWrite(INB_RIGHT, 128); //nok
+   // analogWrite(INA_LEFT, 128); //ok
+//    analogWrite(INB_LEFT, 128); //ok
+//    analogWrite(INA_LEFT, 0); //ok
+
+   // analogWrite(INA_RIGHT, 128); //nok
+//   analogWrite(INA_RIGHT, 0); //nok
+ //  analogWrite(INB_RIGHT, 128); //nok
+
+    digitalWrite(INA_LEFT, LOW);
+    digitalWrite(INB_LEFT, HIGH);
+
+//    digitalWrite(INA_RIGHT, LOW);
+//    digitalWrite(INB_RIGHT, HIGH);
     delay(1);
 }
 
