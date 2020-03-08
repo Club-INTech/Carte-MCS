@@ -87,8 +87,8 @@ public:
 
     void manageStop();
     void updatePositionOrientation();
-    void updateSpeed();
-    void control();
+    void updateSpeed(double deltaTime);
+    void control(double dt);
     void stop();
     void stopTranslation();
     void stopRotation();

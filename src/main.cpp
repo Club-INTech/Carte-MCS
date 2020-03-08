@@ -205,8 +205,11 @@ BufferedData* getXYO(BufferedData& args) {
     return returnData;
 }
 
-void ControlInterruptHandler() {
-    MCS::Instance().control();
+void ControlInterruptHandler(double deltaTime) {
+    MCS::Instance().control(deltaTime);
+}
+
+ISR(PCINT1_vect) {
 }
 
 ISR(PCINT2_vect) {
@@ -226,11 +229,6 @@ void setup(){
 
     digitalWrite(A0, HIGH);
     digitalWrite(A1, HIGH);
-//    digitalWrite(A0, LOW);
-//    digitalWrite(A1, LOW);
-  //  ITimer1.init();
- //   ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
-
 
     registerRPC(ping,0);
     registerRPC(gotoPoint,1);
@@ -261,9 +259,11 @@ void setup(){
 
 void loop(){
     static unsigned long lastTime = micros();
-    if(micros() - lastTime >= 1000) {
-        ControlInterruptHandler();
+    if(micros() - lastTime >= MCS_PERIOD) {
+        unsigned long dt = micros() - lastTime;
         lastTime = micros();
+        double timeDilation = (double)dt / MCS_PERIOD;
+        ControlInterruptHandler(timeDilation); // TODO: faire ça avec un dt pour être plus précis
     }
 }
 

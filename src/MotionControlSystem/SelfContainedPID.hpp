@@ -24,9 +24,9 @@ public:
         this->goal = goal;
     }
 
-    T compute(T currentState) {
+    T compute(T currentState, double deltaTime) {
         this->input = currentState;
-        PID<T>::compute(); // appel de la méthode de pid.h
+        PID<T>::compute(deltaTime); // appel de la méthode de pid.h
         return this->output;
     }
 

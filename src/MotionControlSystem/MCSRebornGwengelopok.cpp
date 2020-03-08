@@ -135,16 +135,16 @@ void MCS::updatePositionOrientation() {
     currentDistance = distance;
 }
 
-void MCS::updateSpeed()
+void MCS::updateSpeed(double deltaTime)
 {
-    averageLeftSpeed.add((leftTicks - previousLeftTicks) * TICK_TO_MM * MCS_FREQ);
-    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM  * MCS_FREQ);
+    averageLeftSpeed.add((leftTicks - previousLeftTicks) * TICK_TO_MM * MCS_FREQ * deltaTime);
+    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM  * MCS_FREQ * deltaTime);
     robotStatus.speedLeftWheel = averageLeftSpeed.value();
     robotStatus.speedRightWheel = averageRightSpeed.value();
 
     if(robotStatus.controlledTranslation)
     {
-        robotStatus.speedTranslation = translationPID.compute(currentDistance);
+        robotStatus.speedTranslation = translationPID.compute(currentDistance, deltaTime);
     }
     else if(!robotStatus.forcedMovement)
     {
@@ -153,7 +153,7 @@ void MCS::updateSpeed()
 
     if(robotStatus.controlledRotation && !expectedWallImpact)
     {
-        robotStatus.speedRotation = rotationPID.compute(robotStatus.orientation);
+        robotStatus.speedRotation = rotationPID.compute(robotStatus.orientation, deltaTime);
     }
     else if(!robotStatus.forcedMovement)
     {
@@ -184,7 +184,7 @@ void MCS::updateSpeed()
     previousLeftSpeedGoal = leftSpeedPID.getCurrentGoal();
     previousRightSpeedGoal = rightSpeedPID.getCurrentGoal();
 }
-void MCS::control()
+void MCS::control(double deltaTime)
 {
     if(!robotStatus.controlled)
         return;
@@ -194,10 +194,10 @@ void MCS::control()
 
     updatePositionOrientation();
 
-    updateSpeed();
+    updateSpeed(deltaTime);
 
-    int32_t leftPWM = leftSpeedPID.compute(robotStatus.speedLeftWheel);
-    int32_t rightPWM = rightSpeedPID.compute(robotStatus.speedRightWheel);
+    int32_t leftPWM = leftSpeedPID.compute(robotStatus.speedLeftWheel, deltaTime);
+    int32_t rightPWM = rightSpeedPID.compute(robotStatus.speedRightWheel, deltaTime);
     leftMotor.run(leftPWM);
     rightMotor.run(rightPWM);
 
@@ -332,6 +332,14 @@ void MCS::stop() {
         robotStatus.movement = MOVEMENT::NONE;
     }
 
+    if(robotStatus.forcedMovement) {
+        robotStatus.speedRotation = 0.0f;
+        robotStatus.speedTranslation = 0.0f;
+        leftSpeedPID.resetOutput(0);
+        rightSpeedPID.resetOutput(0);
+        leftSpeedPID.setGoal(0);
+        rightSpeedPID.setGoal(0);
+    }
 
     translationPID.resetErrors();
     rotationPID.resetErrors();

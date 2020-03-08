@@ -33,11 +33,11 @@ public:
 		resetErrors();
 	}
 
-	void compute() {
+	void compute(double deltaTime) {
 
 		T error = (*setPoint) - (*input);
-		derivative = error - pre_error;
-		integral += error;
+		derivative = (T)((error - pre_error) / deltaTime);
+		integral += (T)(error * deltaTime);
 		if( AWU_enabled && fabs(integral) > integral_max_value )
 			integral = sign(integral)*integral_max_value;
 		pre_error = error;
