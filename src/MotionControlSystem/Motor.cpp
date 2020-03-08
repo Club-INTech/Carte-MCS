@@ -4,8 +4,8 @@ void Motor::setDirection(Direction directionToSet)
 {
 	direction = directionToSet;
 	if(directionToSet == Direction::NONE || directionToSet == Direction::BRAKE) {
-		analogWrite(pin_fin, 0);
-		analogWrite(pin_bin, 0);
+        setPWM(pin_fin, 0);
+        setPWM(pin_bin, 0);
 	}
 	// TODO: Brake?
 }
@@ -42,21 +42,25 @@ void Motor::run(int16_t newpwm)
 	if (pwm > 0) {
 		setDirection(Direction::FORWARD);
 		pwm = (int16_t)MIN(pwm, 255);
-		analogWrite(pin_fin, pwm);
-		analogWrite(pin_bin, 0);
+        setPWM(pin_fin, pwm);
+        setPWM(pin_bin, 0);
 	}
 	else if (pwm < 0) {
 		setDirection(Direction::BACKWARD);
 		pwm = (int16_t)MIN(-pwm, 255);
-		analogWrite(pin_fin, 0);
-		analogWrite(pin_bin, pwm);
+        setPWM(pin_fin, 0);
+        setPWM(pin_bin, pwm);
 	}
 	else
 	{
 		setDirection(Direction::NONE);
-		analogWrite(pin_fin, 0);
-		analogWrite(pin_bin, 0);
+        setPWM(pin_fin, 0);
+        setPWM(pin_bin, 0);
 	}
+}
+
+void Motor::setPWM(uint8_t pin, int16_t pwm) {
+    analogWrite(pin, pwm);
 }
 
 void Motor::stop() {

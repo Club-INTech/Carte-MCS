@@ -22,6 +22,7 @@
 
 #include "TimerInterrupt.h"
 #include "Arduino.h"
+#include "SoftPWM.h"
 
 using namespace I2CC;
 
@@ -208,14 +209,6 @@ void ControlInterruptHandler() {
     MCS::Instance().control();
 }
 
-void TickLeftEncoder() {
-    //MCS::Instance().tickLeftEncoder();
-}
-
-void TickRightEncoder() {
-    //MCS::Instance().tickRightEncoder();
-}
-
 ISR(PCINT2_vect) {
     MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
@@ -235,9 +228,9 @@ void setup(){
     digitalWrite(A1, HIGH);
 //    digitalWrite(A0, LOW);
 //    digitalWrite(A1, LOW);
-    // TODO: pinModes
-    ITimer1.init();
-    ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
+  //  ITimer1.init();
+ //   ITimer1.attachInterruptInterval((long)MCS_PERIOD_MS, ControlInterruptHandler);
+
 
     registerRPC(ping,0);
     registerRPC(gotoPoint,1);
@@ -262,30 +255,16 @@ void setup(){
     registerRPC(getXYO,21);
 
 
-    startI2CC(1, true);
+    startI2CC(1, false);
     // Does not return, so the loop() is useless, id mcs=1
 }
 
 void loop(){
-/*    digitalWrite(A0, LOW);
-    delay(500);
-    digitalWrite(A0, HIGH);
-    delay(500);
-*/
-   // analogWrite(INA_LEFT, 128); //ok
-//    analogWrite(INB_LEFT, 128); //ok
-//    analogWrite(INA_LEFT, 0); //ok
-
-   // analogWrite(INA_RIGHT, 128); //nok
-//   analogWrite(INA_RIGHT, 0); //nok
- //  analogWrite(INB_RIGHT, 128); //nok
-
-    digitalWrite(INA_LEFT, LOW);
-    digitalWrite(INB_LEFT, HIGH);
-
-//    digitalWrite(INA_RIGHT, LOW);
-//    digitalWrite(INB_RIGHT, HIGH);
-    delay(1);
+    static unsigned long lastTime = micros();
+    if(micros() - lastTime >= 1000) {
+        ControlInterruptHandler();
+        lastTime = micros();
+    }
 }
 
                    /*``.           `-:--.`

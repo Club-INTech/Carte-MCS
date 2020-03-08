@@ -22,6 +22,7 @@
 #include "Config/PinMapping.h"
 
 #include <stdint.h>
+#include "SoftPWM.h"
 
 enum class Direction
 {
@@ -39,6 +40,8 @@ private:
 	Direction direction;
 	uint8_t pin_fin;
 	uint8_t pin_bin;
+
+	void setPWM(uint8_t pin, int16_t pwm);
 public:
 	Motor(Side);
 	int16_t pwm;
