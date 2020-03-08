@@ -216,13 +216,7 @@ void TickRightEncoder() {
     //MCS::Instance().tickRightEncoder();
 }
 
-ISR(PCINT1_vect) {
-
-}
-
 ISR(PCINT2_vect) {
-/*    digitalWrite(A0, LOW);
-    digitalWrite(A1, LOW);*/
     MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
 }
@@ -233,10 +227,9 @@ void setup(){
     pinMode(A0, OUTPUT);
     pinMode(A1, OUTPUT);
 
-
-    PCICR |= (1 << PCIE2);    // This enables Pin Change Interrupt 1 that covers the Analog input pins or Port C.
-    PCMSK1 |= (1 << PCINT18) | (1 << PCINT19);  // This enables the interrupt for pin 2 and 3 of Port C.
-    PCMSK2 |= (1 << PCINT23) | (1 << PCINT20);  // This enables the interrupt for pin 2 and 3 of Port C.
+    // Active les interrupts pour les changements sur les pins des codeuses
+    PCICR |= (1 << PCIE2);    // Active les changements sur les pins D0 à D7
+    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
 
     digitalWrite(A0, HIGH);
     digitalWrite(A1, HIGH);
