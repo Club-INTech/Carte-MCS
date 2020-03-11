@@ -20,6 +20,7 @@
 #include "Encoder.h"
 #include "math.h"
 #include "I2CC.h"
+#include <Utils/Timing.h>
 
 using namespace I2CC;
 

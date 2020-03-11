@@ -5,7 +5,7 @@
 *
 **/
 
-
+#include <Utils/Timing.h>
 #include "Config/PinMapping.h"
 #include "I2CC.h"
 
@@ -227,6 +227,8 @@ void setup(){
     PCICR |= (1 << PCIE2);    // Active les changements sur les pins D0 à D7
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
 
+    setupTimers();
+
     digitalWrite(A0, HIGH);
     digitalWrite(A1, HIGH);
 
@@ -258,12 +260,12 @@ void setup(){
 }
 
 void loop(){
-    static unsigned long lastTime = micros();
-    if(micros() - lastTime >= MCS_PERIOD) {
-        unsigned long dt = micros() - lastTime;
-        lastTime = micros();
+    static unsigned long lastTime = adjustedMicros();
+    if(adjustedMicros() - lastTime >= MCS_PERIOD) {
+        unsigned long dt = adjustedMicros() - lastTime;
+        lastTime = adjustedMicros();
         double timeDilation = (double)dt / MCS_PERIOD;
-        ControlInterruptHandler(timeDilation); // TODO: faire ça avec un dt pour être plus précis
+        ControlInterruptHandler(timeDilation);
     }
 }
 

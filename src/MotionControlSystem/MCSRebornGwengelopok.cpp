@@ -505,7 +505,7 @@ void MCS::sendPositionUpdate(BufferedData* returnData) {
      putData(robotStatus.x, returnData);
      putData(robotStatus.y, returnData);
      putData(robotStatus.orientation, returnData);
-     putData<uint32_t>(millis(), returnData);
+     putData<uint32_t>(adjustedMillis(), returnData);
      putData<uint8_t>(robotStatus.notMoving,returnData);
 
 }
