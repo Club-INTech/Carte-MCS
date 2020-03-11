@@ -198,10 +198,11 @@ BufferedData* getTicks(BufferedData& args){
 }
 
 BufferedData* getXYO(BufferedData& args) {
-    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2 + sizeof(float));
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2 + sizeof(float) + sizeof(uint64_t));
     putData<int16_t>(MCS::Instance().getX(), returnData);
     putData<int16_t>(MCS::Instance().getY(), returnData);
     putData<float>(MCS::Instance().getAngle(), returnData);
+    putData<uint64_t>(adjustedMillis(), returnData);
     return returnData;
 }
 
