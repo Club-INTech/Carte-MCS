@@ -216,6 +216,11 @@ ISR(PCINT1_vect) {
 ISR(PCINT2_vect) {
     MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
+
+    int a = digitalRead(INA_LEFT);
+    int b = digitalRead(INB_LEFT);
+    digitalWrite(A0, a ? HIGH : LOW);
+    digitalWrite(A1, b ? HIGH : LOW);
 }
 
 void setup(){
