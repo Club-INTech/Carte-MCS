@@ -1,7 +1,7 @@
 /**
 *Initialisation et boucle principale du programme
 *
-* @author caillou, sylvain, rémi, melanie, Ug
+* @author Gwendoline, Eloise, Xavier
 *
 **/
 
@@ -208,6 +208,7 @@ BufferedData* getXYO(BufferedData& args) {
 
 void ControlInterruptHandler(double deltaTime) {
     MCS::Instance().control(deltaTime);
+    MCS::Instance().manageStop();
 }
 
 ISR(PCINT1_vect) {
