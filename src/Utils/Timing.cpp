@@ -7,7 +7,7 @@
  * Change les fréquences des timers pour avoir des PWM silencieux
  */
 void setupTimers() {
-    TCCR0B = _BV(CS00);
+    //TCCR0B = _BV(CS00);
     TCCR1B = _BV(TIMER1_2_PRESCALER);
     TCCR2B = _BV(TIMER1_2_PRESCALER);
 }

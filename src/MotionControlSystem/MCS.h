@@ -158,6 +158,10 @@ public:
 
     void tickLeftEncoder();
     void tickRightEncoder();
+
+    void init() override;
+
+    void forcePWM(int16_t left, int16_t right);
 };
 
 #endif //LL_MCSREBORN_H

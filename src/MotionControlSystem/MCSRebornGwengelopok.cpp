@@ -47,6 +47,54 @@ MCS::MCS(): leftMotor(Side::LEFT), rightMotor(Side::RIGHT)  {
 
     leftMotor.init();
     rightMotor.init();
+
+}
+
+void MCS::init() {
+
+    initSettings();
+    initStatus();
+    // FIXME : ? Duplication de ce que fait initStatus ?
+    robotStatus.controlled = true;
+    robotStatus.controlledRotation = true;
+    robotStatus.controlledTranslation = true;
+    robotStatus.inRotationInGoto = false;
+    robotStatus.inGoto = false;
+    robotStatus.sentMoveAbnormal = false;
+    robotStatus.movement = MOVEMENT::NONE;
+    expectedWallImpact = false;
+
+
+#if defined(MAIN)
+
+    leftSpeedPID.setTunings(0.8, 0.0022, 25, 0); //0.8    0.0022    25
+    leftSpeedPID.enableAWU(false);
+    rightSpeedPID.setTunings(0.8, 0.00225, 25, 0); //0.638    0.002182    25
+    rightSpeedPID.enableAWU(false);
+
+    translationPID.setTunings(3,0,0,0);
+    translationPID.enableAWU(false);
+    rotationPID.setTunings(4,0,0,0);
+    rotationPID.enableAWU(false);
+
+#elif defined(SLAVE)
+
+    //leftSpeedPID.setTunings(1, 0.00239, 25, 0);//0.53  0.00105
+    leftSpeedPID.setTunings(2, 0, 0, 0);//0.53  0.00105
+    leftSpeedPID.enableAWU(false);
+    //rightSpeedPID.setTunings(1, 0.002, 25, 0);//0.718591667  0.00125
+    rightSpeedPID.setTunings(1, 0.0, 0, 0);//0.718591667  0.00125
+    rightSpeedPID.enableAWU(false);
+    translationPID.setTunings(2,0,5,0);//2  0  5
+    translationPID.enableAWU(false);
+    rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
+    rotationPID.enableAWU(false);
+
+#endif
+
+    leftMotor.init();
+    rightMotor.init();
+
 }
 
 void MCS::initSettings() {
@@ -63,7 +111,7 @@ void MCS::initSettings() {
 
 
     /* mm/s */
-    controlSettings.maxTranslationSpeed = 500;
+    controlSettings.maxTranslationSpeed = 50;
     controlSettings.tolerancySpeed = 100;
 
     /* rad */
@@ -231,7 +279,12 @@ void MCS::manageStop() {
 
     averageRotationDerivativeError.add(rotationPID.getDerivativeError());
     averageTranslationDerivativeError.add(translationPID.getDerivativeError());
-    if(!robotStatus.notMoving && ABS(averageTranslationDerivativeError.value())<= controlSettings.tolerancyDerivative && ABS(translationPID.getCurrentState()-translationPID.getCurrentGoal())<=controlSettings.tolerancyTranslation && ABS(averageRotationDerivativeError.value())<=controlSettings.tolerancyDerivative && ABS(rotationPID.getCurrentState()-rotationPID.getCurrentGoal())<=controlSettings.tolerancyAngle){
+    if(!robotStatus.notMoving
+    && ABS(averageTranslationDerivativeError.value())<= controlSettings.tolerancyDerivative
+    && ABS(translationPID.getCurrentState()-translationPID.getCurrentGoal())<=controlSettings.tolerancyTranslation
+    && ABS(averageRotationDerivativeError.value())<=controlSettings.tolerancyDerivative
+    && ABS(rotationPID.getCurrentState()-rotationPID.getCurrentGoal())<=controlSettings.tolerancyAngle
+    && !robotStatus.forcedMovement) {
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
         bool ElBooly = robotStatus.inRotationInGoto;
@@ -273,11 +326,7 @@ void MCS::manageStop() {
 #endif
 
     }
-    /*if(translationPID.getDerivativeError()==0 && ABS(translationPID.getCurrentOutput()-translationPID.getCurrentGoal())<=controlSettings.tolerancyTranslation && rotationPID.getDerivativeError()==0 && ABS(rotationPID.getCurrentOutput()-rotationPID.getCurrentGoal())<=controlSettings.tolerancyAngle){
-        leftMotor.setDirection(Direction::NONE);
-        rightMotor.setDirection(Direction::NONE);
-        digitalWrite(LED1,HIGH);
-    }*/
+
 }
 
 void MCS::stop() {
@@ -491,6 +540,8 @@ void MCS::speedBasedMovement(MOVEMENT movement) {
 
         case MOVEMENT::NONE:
         default:
+            leftMotor.stop();
+            rightMotor.stop();
             leftSpeedPID.setGoal(0);
             rightSpeedPID.setGoal(0);
             robotStatus.speedRotation = 0;
@@ -630,4 +681,9 @@ void MCS::tickLeftEncoder() {
 
 void MCS::tickRightEncoder() {
     encoderRight.tick();
+}
+
+void MCS::forcePWM(int16_t left, int16_t right) {
+    leftMotor.run(left);
+    rightMotor.run(right);
 }
