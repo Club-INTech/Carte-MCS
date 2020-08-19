@@ -40,9 +40,6 @@ private:
     RobotStatus robotStatus;
     ControlSettings controlSettings;
 
-    Motor leftMotor;
-    Motor rightMotor;
-
     SelfContainedPID<float> leftSpeedPID;
     SelfContainedPID<float> rightSpeedPID;
     SelfContainedPID<float> translationPID;
@@ -162,6 +159,9 @@ public:
     void init() override;
 
     void forcePWM(int16_t left, int16_t right);
+
+    Motor leftMotor;
+    Motor rightMotor;
 };
 
 #endif //LL_MCSREBORN_H

@@ -6,52 +6,9 @@
 
 
 MCS::MCS(): leftMotor(Side::LEFT), rightMotor(Side::RIGHT)  {
-
-    initSettings();
-    initStatus();
-    // FIXME : ? Duplication de ce que fait initStatus ?
-    robotStatus.controlled = true;
-    robotStatus.controlledRotation = true;
-    robotStatus.controlledTranslation = true;
-    robotStatus.inRotationInGoto = false;
-    robotStatus.inGoto = false;
-    robotStatus.sentMoveAbnormal = false;
-    robotStatus.movement = MOVEMENT::NONE;
-    expectedWallImpact = false;
-
-
-#if defined(MAIN)
-
-    leftSpeedPID.setTunings(0.8, 0.0022, 25, 0); //0.8    0.0022    25
-    leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.8, 0.00225, 25, 0); //0.638    0.002182    25
-    rightSpeedPID.enableAWU(false);
-
-    translationPID.setTunings(3,0,0,0);
-    translationPID.enableAWU(false);
-    rotationPID.setTunings(4,0,0,0);
-    rotationPID.enableAWU(false);
-
-#elif defined(SLAVE)
-
-    leftSpeedPID.setTunings(1, 0.00239, 25, 0);//0.53  0.00105
-    leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(1, 0.002, 25, 0);//0.718591667  0.00125
-    rightSpeedPID.enableAWU(false);
-    translationPID.setTunings(2,0,5,0);//2  0  5
-    translationPID.enableAWU(false);
-    rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
-    rotationPID.enableAWU(false);
-
-#endif
-
-    leftMotor.init();
-    rightMotor.init();
-
 }
 
 void MCS::init() {
-
     initSettings();
     initStatus();
     // FIXME : ? Duplication de ce que fait initStatus ?
@@ -78,13 +35,19 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
+    leftSpeedPID.setTunings(2, 0, 0, 0);//0.53  0.00105
+    leftSpeedPID.enableAWU(false);
+    rightSpeedPID.setTunings(0.8, 0.0, 0, 0);//0.718591667  0.00125
+    rightSpeedPID.enableAWU(false);
 
+    /*
     //leftSpeedPID.setTunings(1, 0.00239, 25, 0);//0.53  0.00105
     leftSpeedPID.setTunings(2, 0, 0, 0);//0.53  0.00105
     leftSpeedPID.enableAWU(false);
     //rightSpeedPID.setTunings(1, 0.002, 25, 0);//0.718591667  0.00125
     rightSpeedPID.setTunings(1, 0.0, 0, 0);//0.718591667  0.00125
     rightSpeedPID.enableAWU(false);
+     */
     translationPID.setTunings(2,0,5,0);//2  0  5
     translationPID.enableAWU(false);
     rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
@@ -111,7 +74,7 @@ void MCS::initSettings() {
 
 
     /* mm/s */
-    controlSettings.maxTranslationSpeed = 50;
+    controlSettings.maxTranslationSpeed = 500;
     controlSettings.tolerancySpeed = 100;
 
     /* rad */
@@ -215,18 +178,18 @@ void MCS::updateSpeed(double deltaTime)
     leftSpeedPID.setGoal(robotStatus.speedTranslation-robotStatus.speedRotation);
     rightSpeedPID.setGoal(robotStatus.speedTranslation+robotStatus.speedRotation);
 
-    if( leftSpeedPID.getCurrentGoal() - previousLeftSpeedGoal > controlSettings.maxAcceleration ) {
-        leftSpeedPID.setGoal( previousLeftSpeedGoal + controlSettings.maxAcceleration );
+    if(leftSpeedPID.getCurrentGoal() - previousLeftSpeedGoal > controlSettings.maxAcceleration/deltaTime ) {
+        leftSpeedPID.setGoal( previousLeftSpeedGoal + controlSettings.maxAcceleration/deltaTime );
     }
-    if( previousLeftSpeedGoal - leftSpeedPID.getCurrentGoal() > controlSettings.maxDeceleration && !robotStatus.stuck) {
-        leftSpeedPID.setGoal( previousLeftSpeedGoal - controlSettings.maxDeceleration );
+    if( previousLeftSpeedGoal - leftSpeedPID.getCurrentGoal() > controlSettings.maxDeceleration/deltaTime && !robotStatus.stuck) {
+        leftSpeedPID.setGoal( previousLeftSpeedGoal - controlSettings.maxDeceleration/deltaTime );
     }
 
-    if( rightSpeedPID.getCurrentGoal() - previousRightSpeedGoal > controlSettings.maxAcceleration ) {
-        rightSpeedPID.setGoal( previousRightSpeedGoal + controlSettings.maxAcceleration );
+    if( rightSpeedPID.getCurrentGoal() - previousRightSpeedGoal > controlSettings.maxAcceleration/deltaTime ) {
+        rightSpeedPID.setGoal( previousRightSpeedGoal + controlSettings.maxAcceleration/deltaTime );
     }
-    if( previousRightSpeedGoal - rightSpeedPID.getCurrentGoal() > controlSettings.maxDeceleration && !robotStatus.stuck) {
-        rightSpeedPID.setGoal( previousRightSpeedGoal - controlSettings.maxDeceleration );
+    if( previousRightSpeedGoal - rightSpeedPID.getCurrentGoal() > controlSettings.maxDeceleration/deltaTime && !robotStatus.stuck) {
+        rightSpeedPID.setGoal( previousRightSpeedGoal - controlSettings.maxDeceleration/deltaTime );
     }
 
     previousLeftSpeedGoal = leftSpeedPID.getCurrentGoal();

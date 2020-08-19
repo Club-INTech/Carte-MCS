@@ -206,6 +206,13 @@ BufferedData* getXYO(BufferedData& args) {
     return returnData;
 }
 
+BufferedData* debugAsserv(BufferedData& args) {
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2);
+    putData<int16_t>(MCS::Instance().leftMotor.pwm, returnData);
+    putData<int16_t>(MCS::Instance().rightMotor.pwm, returnData);
+    return returnData;
+}
+
 void ControlInterruptHandler(double deltaTime) {
     MCS::Instance().control(deltaTime);
     MCS::Instance().manageStop();
@@ -217,11 +224,6 @@ ISR(PCINT1_vect) {
 ISR(PCINT2_vect) {
     MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
-
-    int a = digitalRead(INA_LEFT);
-    int b = digitalRead(INB_LEFT);
-    digitalWrite(A0, a ? HIGH : LOW);
-    digitalWrite(A1, b ? HIGH : LOW);
 }
 
 void setup(){
@@ -234,7 +236,7 @@ void setup(){
     PCICR |= (1 << PCIE2);    // Active les changements sur les pins D0 à D7
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
 
-    setupTimers();
+    //setupTimers();
 
     digitalWrite(A0, HIGH);
     digitalWrite(A1, HIGH);
@@ -260,6 +262,7 @@ void setup(){
     registerRPC(getTicks,18);
     registerRPC(sstop,19);
     registerRPC(getXYO,21);
+    registerRPC(debugAsserv,22);
 
 
     startI2CC(1, false);
@@ -268,12 +271,12 @@ void setup(){
 
 void loop(){
     static unsigned long lastTime = adjustedMicros();
-    if(adjustedMicros() - lastTime >= MCS_PERIOD) {
+//    if(adjustedMicros() - lastTime >= MCS_PERIOD) {
         unsigned long dt = adjustedMicros() - lastTime;
         lastTime = adjustedMicros();
         double timeDilation = (double)dt / MCS_PERIOD;
         ControlInterruptHandler(timeDilation);
-    }
+//    }
 }
 
                    /*``.           `-:--.`
