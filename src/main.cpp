@@ -198,11 +198,12 @@ BufferedData* getTicks(BufferedData& args){
 }
 
 BufferedData* getXYO(BufferedData& args) {
-    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2 + sizeof(float) + sizeof(uint64_t));
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2 + sizeof(float) + sizeof(uint64_t)*2);
     putData<int16_t>(MCS::Instance().getX(), returnData);
     putData<int16_t>(MCS::Instance().getY(), returnData);
     putData<float>(MCS::Instance().getAngle(), returnData);
-    putData<uint64_t>(adjustedMillis(), returnData);
+    putData<uint64_t>((uint64_t)42, returnData);
+    putData<uint64_t>((uint64_t)42, returnData);
     return returnData;
 }
 
@@ -210,6 +211,13 @@ BufferedData* debugAsserv(BufferedData& args) {
     BufferedData* returnData = new BufferedData(sizeof(int16_t)*2);
     putData<int16_t>(MCS::Instance().leftMotor.pwm, returnData);
     putData<int16_t>(MCS::Instance().rightMotor.pwm, returnData);
+    return returnData;
+}
+
+BufferedData* mcsTime(BufferedData& args) {
+    BufferedData* returnData = new BufferedData(sizeof(int32_t)*2);
+    putData<int32_t>((int32_t)adjustedMicros(), returnData);
+    putData<int32_t>((int32_t)adjustedMillis(), returnData);
     return returnData;
 }
 
@@ -263,6 +271,7 @@ void setup(){
     registerRPC(sstop,19);
     registerRPC(getXYO,21);
     registerRPC(debugAsserv,22);
+    registerRPC(mcsTime,23);
 
 
     startI2CC(1, false);

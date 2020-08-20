@@ -66,7 +66,7 @@ constexpr uint16_t  POSITION_UPDATE_FREQUENCY = 20; // 20 Hz
 constexpr double    POSITION_UPDATE_PERIOD = 1000000.0 / POSITION_UPDATE_FREQUENCY; // Durée en µs entre deux mesures
 
 #if defined(MAIN)
-constexpr uint16_t  TICKS_PER_TURN =            4096;   // Unité : ticks
+constexpr uint16_t  TICKS_PER_TURN =            1024;   // Unité : ticks
 constexpr float     COD_WHEEL_DIAMETER =        68.1363;  // Unité : mm 63.57   64.32*99.00/100.0
 
 //distance roue codeuse pneu = 14.36mm
@@ -74,7 +74,7 @@ constexpr float     COD_WHEEL_DIAMETER =        68.1363;  // Unité : mm 63.57  
 constexpr float   DISTANCE_COD_GAUCHE_CENTRE = 173.650014570960268; // Unité : mm //171.175
 constexpr float   DISTANCE_COD_DROITE_CENTRE = 173.650014570960268; // Unité : mm //171.175
 #elif defined(SLAVE)
-constexpr uint16_t  TICKS_PER_TURN =            4096;   // Unité : ticks
+constexpr uint16_t  TICKS_PER_TURN =            1024;   // Unité : ticks
 constexpr float     COD_WHEEL_DIAMETER =        68.1363;  // Unité : mm 63.57
 
 //distance roue codeuse pneu = 14.36mm

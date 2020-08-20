@@ -35,9 +35,9 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(2, 0, 0, 0);//0.53  0.00105
+    leftSpeedPID.setTunings(0.1, 0, 0, 0);//0.53  0.00105
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.8, 0.0, 0, 0);//0.718591667  0.00125
+    rightSpeedPID.setTunings(0.1, 0.0, 0, 0);//0.718591667  0.00125
     rightSpeedPID.enableAWU(false);
 
     /*
@@ -148,8 +148,8 @@ void MCS::updatePositionOrientation() {
 
 void MCS::updateSpeed(double deltaTime)
 {
-    averageLeftSpeed.add((leftTicks - previousLeftTicks) * TICK_TO_MM * MCS_FREQ * deltaTime);
-    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM  * MCS_FREQ * deltaTime);
+    averageLeftSpeed.add((leftTicks - previousLeftTicks) * TICK_TO_MM * MCS_FREQ / deltaTime);
+    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM  * MCS_FREQ / deltaTime);
     robotStatus.speedLeftWheel = averageLeftSpeed.value();
     robotStatus.speedRightWheel = averageRightSpeed.value();
 

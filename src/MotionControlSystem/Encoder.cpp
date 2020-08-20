@@ -18,6 +18,5 @@ void Encoder::write(int val_reset) {
 }
 
 void Encoder::tick() {
-    int32_t prev = read();
     backingEncoder->tick();
 }
