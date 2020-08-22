@@ -35,9 +35,9 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(0.1, 0, 0, 0);//0.53  0.00105
+    leftSpeedPID.setTunings(0.3, 0, 0, 0);//0.53  0.00105
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.1, 0.0, 0, 0);//0.718591667  0.00125
+    rightSpeedPID.setTunings(0.3, 0.0, 0, 0);//0.718591667  0.00125
     rightSpeedPID.enableAWU(false);
 
     /*
