@@ -280,12 +280,12 @@ void setup(){
 
 void loop(){
     static unsigned long lastTime = adjustedMicros();
-//    if(adjustedMicros() - lastTime >= MCS_PERIOD) {
+    if(adjustedMicros() - lastTime >= MCS_PERIOD) {
         unsigned long dt = adjustedMicros() - lastTime;
         lastTime = adjustedMicros();
         double timeDilation = (double)dt / MCS_PERIOD;
         ControlInterruptHandler(timeDilation);
-//    }
+    }
 }
 
                    /*``.           `-:--.`
