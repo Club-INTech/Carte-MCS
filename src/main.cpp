@@ -36,6 +36,16 @@ BufferedData* ping(BufferedData& args){
     return returnData;
 }
 
+BufferedData* initParameters(BufferedData& args){
+
+    float parameters[28];
+    for (int i = 0; i <28; i++){
+        getData<float>(parameters[i],&args);
+    }
+
+    MCS::Instance().setParameters(parameters);
+}
+
 BufferedData* gotoPoint(BufferedData& args){
 
     int16_t x;
@@ -272,6 +282,7 @@ void setup(){
     registerRPC(getXYO,21);
     registerRPC(debugAsserv,22);
     registerRPC(mcsTime,23);
+    registerRPC(initParameters,24);
 
 
     startI2CC(1, false);

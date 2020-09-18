@@ -61,6 +61,7 @@ private:
     float targetAngle;
     float angleOffset;
     bool expectedWallImpact;
+    float parameters[4];
 
     Average<float, 100> averageLeftSpeed;
     Average<float, 100> averageRightSpeed;
@@ -110,6 +111,7 @@ public:
 
     void initSettings();
     void initStatus();
+    void setParameters(float[]);
 
     /**
      * Méthode appelée par un InterruptTimer afin d'envoyer au HL la position du robot

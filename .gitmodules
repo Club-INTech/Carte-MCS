@@ -1,3 +1,6 @@
 [submodule "lib/I2C-Callables"]
 	path = lib/I2C-Callables
 	url = https://github.com/Club-INTech/I2C-Callables.git
+[submodule "I2C-Callables"]
+	path = I2C-Callables
+	url = https://github.com/Club-INTech/I2C-Callables.git
