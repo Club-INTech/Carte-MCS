@@ -38,12 +38,19 @@ BufferedData* ping(BufferedData& args){
 
 BufferedData* initParameters(BufferedData& args){
 
-    float parameters[28];
-    for (int i = 0; i <28; i++){
+    float parameters[8];
+    for (int i = 0; i <8; i++){
         getData<float>(parameters[i],&args);
     }
 
     MCS::Instance().setParameters(parameters);
+    BufferedData* returnData = new BufferedData(8*sizeof(float));
+
+    for (int i = 0; i <8; i++){
+        putData<float>(parameters[i], returnData);
+    }
+
+    return returnData;
 }
 
 BufferedData* gotoPoint(BufferedData& args){

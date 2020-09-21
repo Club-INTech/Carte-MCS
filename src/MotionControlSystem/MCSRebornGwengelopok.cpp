@@ -129,24 +129,24 @@ void MCS::initStatus() {
 
 void MCS::setParameters(float parameters[]) {
 
+    digitalWrite(A0, LOW);
     leftSpeedPID.setTunings(parameters[0], parameters[1], parameters[2], parameters[3]);
-    rightSpeedPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
-    translationPID.setTunings(parameters[8], parameters[9], parameters[10], parameters[11]);
-    rotationPID.setTunings(parameters[12], parameters[13], parameters[14], parameters[15]);
-    controlSettings.maxAcceleration = parameters[16];
-    controlSettings.maxDeceleration = parameters[17];
-    controlSettings.maxRotationSpeed = parameters[18];
-    controlSettings.maxTranslationSpeed = parameters[19];
-    controlSettings.tolerancySpeed = parameters[20];
-    controlSettings.tolerancyAngle = parameters[21];
-    controlSettings.tolerancyTranslation = parameters[22];
-    controlSettings.tolerancyX = parameters[23];
-    controlSettings.tolerancyY = parameters[24];
-    controlSettings.stopDelay = parameters[25];
-    controlSettings.tolerancyDerivative = parameters[26];
-    controlSettings.tolerancyDifferenceSpeed = parameters[27];
-
-
+//    rightSpeedPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
+//    translationPID.setTunings(parameters[8], parameters[9], parameters[10], parameters[11]);
+    translationPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
+//    rotationPID.setTunings(parameters[12], parameters[13], parameters[14], parameters[15]);
+//    controlSettings.maxAcceleration = parameters[16];
+//    controlSettings.maxDeceleration = parameters[17];
+//    controlSettings.maxRotationSpeed = parameters[18];
+//    controlSettings.maxTranslationSpeed = parameters[19];
+//    controlSettings.tolerancySpeed = parameters[20];
+//    controlSettings.tolerancyAngle = parameters[21];
+//    controlSettings.tolerancyTranslation = parameters[22];
+//    controlSettings.tolerancyX = parameters[23];
+//    controlSettings.tolerancyY = parameters[24];
+//    controlSettings.stopDelay = parameters[25];
+//    controlSettings.tolerancyDerivative = parameters[26];
+//    controlSettings.tolerancyDifferenceSpeed = parameters[27];
 }
 
 void MCS::updatePositionOrientation() {

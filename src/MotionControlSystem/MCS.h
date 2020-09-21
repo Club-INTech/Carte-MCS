@@ -61,7 +61,6 @@ private:
     float targetAngle;
     float angleOffset;
     bool expectedWallImpact;
-    float parameters[4];
 
     Average<float, 100> averageLeftSpeed;
     Average<float, 100> averageRightSpeed;
