@@ -38,15 +38,15 @@ BufferedData* ping(BufferedData& args){
 
 BufferedData* initParameters(BufferedData& args){
 
-    float parameters[8];
-    for (int i = 0; i <8; i++){
+    float parameters[6];
+    for (int i = 0; i <6; i++){
         getData<float>(parameters[i],&args);
     }
 
     MCS::Instance().setParameters(parameters);
-    BufferedData* returnData = new BufferedData(8*sizeof(float));
+    BufferedData* returnData = new BufferedData(6*sizeof(float));
 
-    for (int i = 0; i <8; i++){
+    for (int i = 0; i <6; i++){
         putData<float>(parameters[i], returnData);
     }
 
@@ -287,6 +287,9 @@ void setup(){
     MCS::Instance().init();
     pinMode(A0, OUTPUT);
     pinMode(A1, OUTPUT);
+
+    //MCS::Instance().controlledTranslation(false);
+    //MCS::Instance().controlledRotation(false);
 
     // Active les interrupts pour les changements sur les pins des codeuses
     PCICR |= (1 << PCIE2);    // Active les changements sur les pins D0 à D7
