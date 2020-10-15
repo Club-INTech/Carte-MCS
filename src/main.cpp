@@ -257,6 +257,9 @@ void setup(){
     pinMode(A0, OUTPUT);
     pinMode(A1, OUTPUT);
 
+    //MCS::Instance().controlledTranslation(false);
+    //MCS::Instance().controlledRotation(false);
+
     // Active les interrupts pour les changements sur les pins des codeuses
     PCICR |= (1 << PCIE2);    // Active les changements sur les pins D0 à D7
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses

@@ -35,9 +35,9 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(0.3, 0, 0, 0);//0.53  0.00105
+    leftSpeedPID.setTunings(0.36, 0.000012, 10, 0);//0.374, 0.000001, 10, 0
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.35, 0.0, 0, 0);//0.718591667  0.00125
+    rightSpeedPID.setTunings(0.35, 0.0001, 10, 0);//0.3045, 0.0001, 10, 0
     rightSpeedPID.enableAWU(false);
 
     /*
@@ -48,9 +48,9 @@ void MCS::init() {
     rightSpeedPID.setTunings(1, 0.0, 0, 0);//0.718591667  0.00125
     rightSpeedPID.enableAWU(false);
      */
-    translationPID.setTunings(2,0,5,0);//2  0  5
+    translationPID.setTunings(1.09,0,1,0);//1.15  0   6
     translationPID.enableAWU(false);
-    rotationPID.setTunings(0,0,0,0);  //4.8  0.00001  15.5
+    rotationPID.setTunings(6,0,10,0);  //4.8  0.00001  15.5
     //rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
     rotationPID.enableAWU(false);
 
@@ -91,7 +91,7 @@ void MCS::initSettings() {
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #elif defined(SLAVE)
-    controlSettings.tolerancyTranslation = 2;
+    controlSettings.tolerancyTranslation = 1;
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #endif
@@ -169,34 +169,30 @@ void MCS::updatePositionOrientation() {
     currentDistance = distance;
 }
 
-void MCS::updateSpeed(double deltaTime)
-{
+void MCS::updateSpeed(double deltaTime) {
     averageLeftSpeed.add((leftTicks - previousLeftTicks) * TICK_TO_MM * MCS_FREQ / deltaTime);
-    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM  * MCS_FREQ / deltaTime);
+    averageRightSpeed.add((rightTicks - previousRightTicks) * TICK_TO_MM * MCS_FREQ / deltaTime);
     robotStatus.speedLeftWheel = averageLeftSpeed.value();
     robotStatus.speedRightWheel = averageRightSpeed.value();
 
-    if(robotStatus.controlledTranslation)
-    {
+    if (robotStatus.controlledTranslation) {
         robotStatus.speedTranslation = translationPID.compute(currentDistance, deltaTime);
-    }
-    else if(!robotStatus.forcedMovement)
-    {
+    } else if (!robotStatus.forcedMovement) {
         robotStatus.speedTranslation = 0.0f;
     }
 
-    if(robotStatus.controlledRotation && !expectedWallImpact)
-    {
+    if (robotStatus.controlledRotation && !expectedWallImpact) {
         robotStatus.speedRotation = rotationPID.compute(robotStatus.orientation, deltaTime);
-    }
-    else if(!robotStatus.forcedMovement)
-    {
+    } else if (!robotStatus.forcedMovement) {
         robotStatus.speedRotation = 0.0f;
     }
 
 
-    robotStatus.speedTranslation = MAX(-controlSettings.maxTranslationSpeed, MIN(controlSettings.maxTranslationSpeed, robotStatus.speedTranslation));
-    robotStatus.speedRotation = MAX(-controlSettings.maxRotationSpeed, MIN(controlSettings.maxRotationSpeed, robotStatus.speedRotation)) * DISTANCE_COD_GAUCHE_CENTRE;
+    robotStatus.speedTranslation = MAX(-controlSettings.maxTranslationSpeed,
+                                       MIN(controlSettings.maxTranslationSpeed, robotStatus.speedTranslation));
+    if (robotStatus.controlledRotation) {
+    robotStatus.speedRotation = MAX(-controlSettings.maxRotationSpeed, MIN(controlSettings.maxRotationSpeed, robotStatus.speedRotation)) *DISTANCE_COD_GAUCHE_CENTRE;
+    }
 
     leftSpeedPID.setGoal(robotStatus.speedTranslation-robotStatus.speedRotation);
     rightSpeedPID.setGoal(robotStatus.speedTranslation+robotStatus.speedRotation);
