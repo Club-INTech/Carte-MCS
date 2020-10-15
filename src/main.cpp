@@ -205,6 +205,37 @@ BufferedData* getRawPosData(BufferedData& args){
 
 }
 
+BufferedData* getRawPosDataSpeed(BufferedData& args){
+    float leftSpeed= MCS::Instance().getLeftSpeed();
+    float rightSpeed= MCS::Instance().getRightSpeed();
+    long leftSpeedGoal;
+    long rightSpeedGoal;
+    MCS::Instance().getSpeedGoals(leftSpeedGoal,rightSpeedGoal);
+    BufferedData* returnData = new BufferedData(sizeof(float)*2 + sizeof(long)*2);
+    returnData->rewind();
+
+    putData<float>(leftSpeed,returnData);
+    putData<float>(rightSpeed,returnData);
+    putData<long>(leftSpeedGoal,returnData);
+    putData<long>(rightSpeedGoal,returnData);
+
+    return returnData;
+}
+
+BufferedData* getRawPosDataPos(BufferedData& args){
+    int16_t x = MCS::Instance().getX();
+    int16_t y = MCS::Instance().getY();
+    float angle= MCS::Instance().getAngle();
+    BufferedData* returnData = new BufferedData(sizeof(int16_t)*2+ sizeof(float)*1);
+    returnData->rewind();
+    putData<int16_t>(x,returnData);
+    putData<int16_t>(y,returnData);
+    putData<float>(angle,returnData);
+
+    return returnData;
+}
+
+
 BufferedData* getTicks(BufferedData& args){
     int32_t leftTicks = MCS::Instance().getLeftTicks();
     int32_t rightTicks = MCS::Instance().getRightTicks();
@@ -264,7 +295,7 @@ void setup(){
     //setupTimers();
 
     digitalWrite(A0, HIGH);
-    digitalWrite(A1, HIGH);
+    digitalWrite(A1, LOW);
 
     registerRPC(ping,0);
     registerRPC(gotoPoint,1);
@@ -290,6 +321,8 @@ void setup(){
     registerRPC(debugAsserv,22);
     registerRPC(mcsTime,23);
     registerRPC(initParameters,24);
+    registerRPC(getRawPosDataSpeed, 25);
+    registerRPC(getRawPosDataPos, 26);
 
 
     startI2CC(1, false);

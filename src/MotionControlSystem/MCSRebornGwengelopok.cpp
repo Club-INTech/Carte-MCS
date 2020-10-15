@@ -131,9 +131,9 @@ void MCS::setParameters(float parameters[]) {
 
     digitalWrite(A0, LOW);
     leftSpeedPID.setTunings(parameters[0], parameters[1], parameters[2], parameters[3]);
-//    rightSpeedPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
+    rightSpeedPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
 //    translationPID.setTunings(parameters[8], parameters[9], parameters[10], parameters[11]);
-    translationPID.setTunings(parameters[4], parameters[5], parameters[6], parameters[7]);
+//    translationPID.setTunings(parameters[4], parameters[5], parameters[6], 0);
 //    rotationPID.setTunings(parameters[12], parameters[13], parameters[14], parameters[15]);
 //    controlSettings.maxAcceleration = parameters[16];
 //    controlSettings.maxDeceleration = parameters[17];
