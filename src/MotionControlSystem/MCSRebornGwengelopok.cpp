@@ -35,9 +35,9 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(0.51, 0.00008, 30, 0);//0.374, 0.000001, 10, 0
+    leftSpeedPID.setTunings(0.395, 0.00003, 30, 0);//0.39, 0.000001, 10, 0      0.38
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.45, 0.00004, 30, 0);//0.3045, 0.0001, 10, 0
+    rightSpeedPID.setTunings(0.325, 0.00001, 30, 0);//0.35, 0.0001, 10, 0        0.34
     rightSpeedPID.enableAWU(false);
 
     /*
@@ -577,7 +577,7 @@ void MCS::setForcedMovement(bool newState) {
 }
 
 void MCS::setTranslationSpeed(float speed) {
-    robotStatus.speedTranslation = speed;
+//    robotStatus.speedTranslation = speed;
 }
 
 void MCS::setRotationSpeed(float speed) {
