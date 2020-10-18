@@ -35,9 +35,9 @@ void MCS::init() {
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(0.375, 0.00007, 50, 0);//0.39, 0.000001, 10, 0      0.38
+    leftSpeedPID.setTunings(0.375, 0.00007, 10, 0);//0.375, 0.00007, 10, 0      0.38
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.335, 0.00003, 50, 0);//0.35, 0.0001, 10, 0        0.34
+    rightSpeedPID.setTunings(0.335, 0.00003, 10, 0);//0.335, 0.00003, 10, 0        0.34
     rightSpeedPID.enableAWU(false);
 
     /*
@@ -48,9 +48,9 @@ void MCS::init() {
     rightSpeedPID.setTunings(1, 0.0, 0, 0);//0.718591667  0.00125
     rightSpeedPID.enableAWU(false);
      */
-    translationPID.setTunings(1.09,0,1,0);//1.15  0   6
+    translationPID.setTunings(2.78,0,30,0);//2.78,0,30,0
     translationPID.enableAWU(false);
-    rotationPID.setTunings(6,0,10,0);  //4.8  0.00001  15.5
+    rotationPID.setTunings(3.38,0,0,0);  //4.8  0.00001  15.5
     //rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
     rotationPID.enableAWU(false);
 
@@ -67,16 +67,16 @@ void MCS::initSettings() {
 
 
     /* mm/s/MCS_PERIOD */
-    controlSettings.maxAcceleration = 2;
-    controlSettings.maxDeceleration = 2;
+    controlSettings.maxAcceleration = 4;
+    controlSettings.maxDeceleration = 4;
 
     /* rad/s */
     controlSettings.maxRotationSpeed = 2*PI;
 
 
     /* mm/s */
-    controlSettings.maxTranslationSpeed = 1000;
-    controlSettings.tolerancySpeed = 100;
+    controlSettings.maxTranslationSpeed = 500;
+    controlSettings.tolerancySpeed = 10;
 
     /* rad */
 #if defined(MAIN)
@@ -91,7 +91,7 @@ void MCS::initSettings() {
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #elif defined(SLAVE)
-    controlSettings.tolerancyTranslation = 1;
+    controlSettings.tolerancyTranslation = 5;
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #endif
@@ -103,7 +103,8 @@ void MCS::initSettings() {
 #if defined(MAIN)
     controlSettings.tolerancyDerivative = 7;
 #elif defined(SLAVE)
-    controlSettings.tolerancyDerivative = 10;
+    //controlSettings.tolerancyDerivative = 10;
+    controlSettings.tolerancyDerivative = 1; //à laisser très petit sinon le robot ne s'arrete pas
 #endif
 
     /* patate */
@@ -418,7 +419,7 @@ void MCS::rotate(float angle) {
 
         differenceAngle = robotStatus.orientation-targetAngle;
     }
-
+/**
 #if defined(MAIN)
 
     if(1.57<ABS(differenceAngle)) {
@@ -444,7 +445,7 @@ void MCS::rotate(float angle) {
         rotationPID.setTunings(-13.54*ABS(differenceAngle)+20.53,0.000001,10,0);
     }
 
-#endif
+#endif **/
 
     if( ! rotationPID.active) {
         rotationPID.fullReset();
