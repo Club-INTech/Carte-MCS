@@ -11,7 +11,7 @@
 constexpr uint8_t ENCODER_LEFT_A = 8;//PB0
 constexpr uint8_t ENCODER_LEFT_B = 7;//PD7
 constexpr uint8_t ENCODER_RIGHT_A = 2;//PD2
-constexpr uint8_t ENCODER_RIGHT_B = 4;//PD4
+constexpr uint8_t ENCODER_RIGHT_B = 6;//PD6
 
 // Moteurs
 constexpr uint8_t INA_LEFT = 9;//PB1

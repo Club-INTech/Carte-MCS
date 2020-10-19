@@ -64,13 +64,10 @@ private:
 
     Average<float, 100> averageLeftSpeed;
     Average<float, 100> averageRightSpeed;
-#if defined(MAIN)
-    Average<float, 25> averageRotationDerivativeError;
-    Average<float, 25> averageTranslationDerivativeError;
-#elif defined(SLAVE)
+
     Average<float, 10> averageRotationDerivativeError;
     Average<float, 10> averageTranslationDerivativeError;
-#endif
+
 
     bool sequentialMovement;
 

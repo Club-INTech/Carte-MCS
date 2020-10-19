@@ -274,10 +274,17 @@ void ControlInterruptHandler(double deltaTime) {
     MCS::Instance().manageStop();
 }
 
+ISR(PCINT0_vect) {
+    digitalWrite(A1, !digitalRead(A1));
+    MCS::Instance().tickLeftEncoder();
+    MCS::Instance().tickRightEncoder();
+}
+
 ISR(PCINT1_vect) {
 }
 
 ISR(PCINT2_vect) {
+    digitalWrite(A0, !digitalRead(A0));
     MCS::Instance().tickLeftEncoder();
     MCS::Instance().tickRightEncoder();
 }
@@ -295,11 +302,17 @@ void setup(){
     PCICR |= (1 << PCIE2) | (1 << PCIE0);    // Active les changements sur les pins D0 à D7
 
 #if defined(MAIN)
-    PCMSK2 |= (1 << PCINT18) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
+    PCMSK2 |= (1 << PCINT18) | (1 << PCINT23) | (1 << PCINT22);  // On veut juste les pins des codeuses
     PCMSK0 |= (1 << PCINT0);
 #elif defined(SLAVE)
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
 #endif
+
+//    PCICR = 5;
+//    PCMSK2 = 149;
+
+
+
 
     //setupTimers();
 
