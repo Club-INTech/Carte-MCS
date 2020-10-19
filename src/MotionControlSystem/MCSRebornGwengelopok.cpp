@@ -24,14 +24,14 @@ void MCS::init() {
 
 #if defined(MAIN)
 
-    leftSpeedPID.setTunings(0.3, 0, 0, 0); //0.8    0.0022    25
+    leftSpeedPID.setTunings(0.260, 0, 10, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.3, 0, 0, 0); //0.8    0.00225    25
+    rightSpeedPID.setTunings(0.295, 0, 10, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false);
 
-    translationPID.setTunings(1,0,0,0);
+    translationPID.setTunings(0,0,0,0);
     translationPID.enableAWU(false);
-    rotationPID.setTunings(1,0,0,0);
+    rotationPID.setTunings(0,0,0,0);
     rotationPID.enableAWU(false);
 
 #elif defined(SLAVE)
