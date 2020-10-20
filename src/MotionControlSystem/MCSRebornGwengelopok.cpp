@@ -3,6 +3,7 @@
 //
 
 #include "MCS.h"
+#include "I2CC.h"
 
 
 MCS::MCS(): leftMotor(Side::LEFT), rightMotor(Side::RIGHT)  {
@@ -178,7 +179,16 @@ void MCS::updateSpeed(double deltaTime) {
     robotStatus.speedRightWheel = averageRightSpeed.value();
 
     if (robotStatus.controlledTranslation) {
+        #if defined (MAIN)
+                    leftSpeedPID.setTunings(0.265, 0.001, 15, 0);
+                    rightSpeedPID.setTunings(0.295,0.001,15,0);
+        #endif
         robotStatus.speedTranslation = translationPID.compute(currentDistance, deltaTime);
+        #if defined (MAIN)
+                leftSpeedPID.setTunings(0.265, 0, 10, 0);
+                rightSpeedPID.setTunings(0.295,0,10,0);
+        #endif
+
     } else if (!robotStatus.forcedMovement) {
         robotStatus.speedTranslation = 0.0f;
     }
@@ -392,10 +402,20 @@ void MCS::translate(int16_t amount) {
         robotStatus.notMoving = MovementStatus::MOVING;
         return;
     }
+#if defined (MAIN)
+    if (amount <= 500) {
+        leftSpeedPID.setTunings(0.260, 0.001, 15, 0);
+        rightSpeedPID.setTunings(0.295,0.001,15,0);
+    }
+#endif
     robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
-#if defined(MAIN)
+
+    leftSpeedPID.setTunings(0.260, 0, 10, 0);
+    rightSpeedPID.setTunings(0.295, 0, 10, 0);
+
+    #if defined(MAIN)
     //digitalWrite(LED2,LOW);
 #elif defined(SLAVE)
     //digitalWrite(LED2_1,HIGH);
