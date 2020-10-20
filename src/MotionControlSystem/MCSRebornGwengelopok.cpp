@@ -3,7 +3,6 @@
 //
 
 #include "MCS.h"
-#include "I2CC.h"
 
 
 MCS::MCS(): leftMotor(Side::LEFT), rightMotor(Side::RIGHT)  {
@@ -30,7 +29,7 @@ void MCS::init() {
     rightSpeedPID.setTunings(0.295, 0, 10, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false);
 
-    translationPID.setTunings(0,0,0,0);
+    translationPID.setTunings(2.201,0,10,0);
     translationPID.enableAWU(false);
     rotationPID.setTunings(0,0,0,0);
     rotationPID.enableAWU(false);
@@ -81,14 +80,14 @@ void MCS::initSettings() {
 
     /* rad */
 #if defined(MAIN)
-    controlSettings.tolerancyAngle = 0.0005;
+    controlSettings.tolerancyAngle = 0.018;
 #elif defined(SLAVE)
     controlSettings.tolerancyAngle = 0.018;
 #endif
 
     /* mm */
 #if defined(MAIN)
-    controlSettings.tolerancyTranslation = 1;
+    controlSettings.tolerancyTranslation = 5;
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #elif defined(SLAVE)
@@ -102,7 +101,7 @@ void MCS::initSettings() {
 
     /* mm/s */
 #if defined(MAIN)
-    controlSettings.tolerancyDerivative = 7;
+    controlSettings.tolerancyDerivative = 1;
 #elif defined(SLAVE)
     //controlSettings.tolerancyDerivative = 10;
     controlSettings.tolerancyDerivative = 1; //à laisser très petit sinon le robot ne s'arrete pas
@@ -180,12 +179,12 @@ void MCS::updateSpeed(double deltaTime) {
 
     if (robotStatus.controlledTranslation) {
         #if defined (MAIN)
-                    leftSpeedPID.setTunings(0.265, 0.001, 15, 0);
+                    leftSpeedPID.setTunings(0.260, 0.001, 15, 0);
                     rightSpeedPID.setTunings(0.295,0.001,15,0);
         #endif
         robotStatus.speedTranslation = translationPID.compute(currentDistance, deltaTime);
         #if defined (MAIN)
-                leftSpeedPID.setTunings(0.265, 0, 10, 0);
+                leftSpeedPID.setTunings(0.260, 0, 10, 0);
                 rightSpeedPID.setTunings(0.295,0,10,0);
         #endif
 
@@ -397,6 +396,22 @@ void MCS::translate(int16_t amount) {
         return;
     targetDistance = amount;
     translationPID.fullReset();
+
+/**#if defined(MAIN)
+    //digitalWrite(LED2,LOW);
+    double differenceDistanceX = robotStatus.x - targetX;
+    double differenceDistanceY = robotStatus.y - targetY;
+    double differenceDistance = square(pow(differenceDistanceX,2) + pow(differenceDistanceY,2));
+
+    if(differenceDistanceX < 500 or differenceDistanceY<500) {
+        leftSpeedPID.setTunings(0.260, 0.001, 20, 0);
+        rightSpeedPID.setTunings(0.295, 0.001, 20, 0);
+
+    }
+#elif defined(SLAVE)
+    //digitalWrite(LED2_1,HIGH);
+#endif **/
+
     if(amount == 0) {
         translationPID.setGoal(currentDistance);
         robotStatus.notMoving = MovementStatus::MOVING;
@@ -411,6 +426,12 @@ void MCS::translate(int16_t amount) {
     robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
+
+#if defined (MAIN)
+    leftSpeedPID.setTunings(0.260, 0, 10, 0);
+    rightSpeedPID.setTunings(0.295, 0, 10, 0);
+#endif
+
 
     leftSpeedPID.setTunings(0.260, 0, 10, 0);
     rightSpeedPID.setTunings(0.295, 0, 10, 0);
