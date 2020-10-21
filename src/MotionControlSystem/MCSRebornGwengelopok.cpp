@@ -27,12 +27,19 @@ void MCS::init() {
     leftSpeedPID.setTunings(0.270, 0, 40, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
     rightSpeedPID.setTunings(0.2827, 0, 40, 0); //0.295, 0, 10, 0
-    rightSpeedPID.enableAWU(false);
+    rightSpeedPID.enableAWU(false); //Asserv pour 1m
 
-    translationPID.setTunings(2.201,0,10,0);
+    /**leftSpeedPID.setTunings(0.260, 0, 10, 0); //0.260, 0, 10, 0
+    leftSpeedPID.enableAWU(false);
+    rightSpeedPID.setTunings(0.295, 0, 10, 0); //0.295, 0, 10, 0
+    rightSpeedPID.enableAWU(false);**/
+
+    translationPID.setTunings(2.201,0.00002,10,0); //PID pour + de 50 cm
     translationPID.enableAWU(false);
-    rotationPID.setTunings(0,0,0,0);
+    rotationPID.setTunings(4.8,0.0001,0,0);
     rotationPID.enableAWU(false);
+
+    /****/
 
 #elif defined(SLAVE)
     leftSpeedPID.setTunings(0.375, 0.00007, 10, 0);//0.375, 0.00007, 10, 0      0.38
@@ -87,7 +94,7 @@ void MCS::initSettings() {
 
     /* mm */
 #if defined(MAIN)
-    controlSettings.tolerancyTranslation = 5;
+    controlSettings.tolerancyTranslation = 1;
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 #elif defined(SLAVE)
@@ -388,44 +395,23 @@ void MCS::translate(int16_t amount) {
     targetDistance = amount;
     translationPID.fullReset();
 
-/**#if defined(MAIN)
-    //digitalWrite(LED2,LOW);
-    double differenceDistanceX = robotStatus.x - targetX;
-    double differenceDistanceY = robotStatus.y - targetY;
-    double differenceDistance = square(pow(differenceDistanceX,2) + pow(differenceDistanceY,2));
-
-    if(differenceDistanceX < 500 or differenceDistanceY<500) {
-        leftSpeedPID.setTunings(0.260, 0.001, 20, 0);
-        rightSpeedPID.setTunings(0.295, 0.001, 20, 0);
-
-    }
-#elif defined(SLAVE)
-    //digitalWrite(LED2_1,HIGH);
-#endif **/
-
     if(amount == 0) {
         translationPID.setGoal(currentDistance);
         robotStatus.notMoving = MovementStatus::MOVING;
         return;
     }
-#if defined (MAIN)
-    if (amount <= 500) {
-        leftSpeedPID.setTunings(0.260, 0.001, 15, 0);
-        rightSpeedPID.setTunings(0.295,0.001,15,0);
+/**#if defined (MAIN)
+    if (targetDistance <= 500) {
+        translationPID.setTunings(0,0,0,0);
     }
-#endif
+#endif **/
     robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
 
-#if defined (MAIN)
-    leftSpeedPID.setTunings(0.260, 0, 10, 0);
-    rightSpeedPID.setTunings(0.295, 0, 10, 0);
-#endif
-
-
-    leftSpeedPID.setTunings(0.260, 0, 10, 0);
-    rightSpeedPID.setTunings(0.295, 0, 10, 0);
+/**#if defined (MAIN)
+    translationPID.setTunings(2.201,0,10,0);
+#endif **/
 
     #if defined(MAIN)
     //digitalWrite(LED2,LOW);
