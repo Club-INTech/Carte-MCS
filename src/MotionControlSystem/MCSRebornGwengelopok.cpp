@@ -24,9 +24,9 @@ void MCS::init() {
 
 #if defined(MAIN)
 
-    leftSpeedPID.setTunings(0.260, 0, 10, 0); //0.260, 0, 10, 0
+    leftSpeedPID.setTunings(0.270, 0, 40, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.295, 0, 10, 0); //0.295, 0, 10, 0
+    rightSpeedPID.setTunings(0.2827, 0, 40, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false);
 
     translationPID.setTunings(2.201,0,10,0);
@@ -178,16 +178,7 @@ void MCS::updateSpeed(double deltaTime) {
     robotStatus.speedRightWheel = averageRightSpeed.value();
 
     if (robotStatus.controlledTranslation) {
-        #if defined (MAIN)
-                    leftSpeedPID.setTunings(0.260, 0.001, 15, 0);
-                    rightSpeedPID.setTunings(0.295,0.001,15,0);
-        #endif
         robotStatus.speedTranslation = translationPID.compute(currentDistance, deltaTime);
-        #if defined (MAIN)
-                leftSpeedPID.setTunings(0.260, 0, 10, 0);
-                rightSpeedPID.setTunings(0.295,0,10,0);
-        #endif
-
     } else if (!robotStatus.forcedMovement) {
         robotStatus.speedTranslation = 0.0f;
     }
