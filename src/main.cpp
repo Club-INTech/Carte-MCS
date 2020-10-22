@@ -269,6 +269,10 @@ BufferedData* mcsTime(BufferedData& args) {
     return returnData;
 }
 
+BufferedData* expectedWallImpact(BufferedData& args) {
+    MCS::Instance().expectWallImpact();
+}
+
 void ControlInterruptHandler(double deltaTime) {
     MCS::Instance().control(deltaTime);
     MCS::Instance().manageStop();
@@ -345,6 +349,7 @@ void setup(){
     registerRPC(initParameters,24);
     registerRPC(getRawPosDataSpeed, 25);
     registerRPC(getRawPosDataPos, 26);
+    registerRPC(expectedWallImpact, 27);
 
 
     startI2CC(1, false);
