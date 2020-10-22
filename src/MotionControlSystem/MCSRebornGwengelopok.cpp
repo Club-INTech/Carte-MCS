@@ -24,19 +24,40 @@ void MCS::init() {
 
 #if defined(MAIN)
 
-    leftSpeedPID.setTunings(0.270, 0, 40, 0); //0.260, 0, 10, 0
+  /**  leftSpeedPID.setTunings(0.270, 0, 0, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.2827, 0, 40, 0); //0.295, 0, 10, 0
-    rightSpeedPID.enableAWU(false); //Asserv pour 1m
 
-    /**leftSpeedPID.setTunings(0.260, 0, 10, 0); //0.260, 0, 10, 0
+    rightSpeedPID.setTunings(0.2827, 0, 0, 0); //0.295, 0, 10, 0
+    rightSpeedPID.enableAWU(false); //Asserv pour 1m **/
+
+    leftSpeedPID.setTunings(0.218, 0, 15, 0); //0.260, 0, 10, 0          FuséeTime : 0.001
     leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.295, 0, 10, 0); //0.295, 0, 10, 0
+    rightSpeedPID.setTunings(0.235, 0, 15, 0); //0.295, 0, 10, 0
+    rightSpeedPID.enableAWU(false);
+
+    /**leftSpeedPID.setTunings(0.218, 0, 15, 0); //0.260, 0, 10, 0
+    leftSpeedPID.enableAWU(false);
+    rightSpeedPID.setTunings(0.235, 0, 15, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false);**/
 
-    translationPID.setTunings(2.201,0.00002,10,0); //PID pour + de 50 cm
+    //translationPID.setTunings(3.5,0.0005,0,0); //Asserv pour 185 mm
+    //translationPID.setTunings(3.45,0.0001,0,0);//Asserv pour 225 mm
+    //translationPID.setTunings(3.1,0.00008,0,0); //Asserv pour 250 mm
+    //translationPID.setTunings(2.9,0,0,0);//Asserv pour 305 cm
+
+
+    //translationPID.setTunings(2.45,0,30,0); //Asserv entre 400 et 405
+    //translationPID.setTunings(2.3455,0,30,0);
+    //translationPID.setTunings(2.394,0,30,0);//Asserv entre 490 et 495 mm
+    //translationPID.setTunings(2.398,0,30,0); //Asserv de 495 à 510 exlcus
+    //translationPID.setTunings(2.4535,0,30,0); //Asserv de 510 à 530 exclus
+    //translationPID.setTunings(2.498,0,30,0); //Asserv de 530 inclus à 550 exclus
+    //translationPID.setTunings(2.55,0,30,0);//Asserv pour +550 mm
+
+    translationPID.setTunings(0.5,0,0,0);
     translationPID.enableAWU(false);
-    rotationPID.setTunings(4.8,0.0001,0,0);
+
+    rotationPID.setTunings(0,0,0,0);
     rotationPID.enableAWU(false);
 
     /****/
@@ -44,21 +65,14 @@ void MCS::init() {
 #elif defined(SLAVE)
     leftSpeedPID.setTunings(0.375, 0.00007, 10, 0);//0.375, 0.00007, 10, 0      0.38
     leftSpeedPID.enableAWU(false);
+
     rightSpeedPID.setTunings(0.335, 0.00003, 10, 0);//0.335, 0.00003, 10, 0        0.34
     rightSpeedPID.enableAWU(false);
 
-    /*
-    //leftSpeedPID.setTunings(1, 0.00239, 25, 0);//0.53  0.00105
-    leftSpeedPID.setTunings(2, 0, 0, 0);//0.53  0.00105
-    leftSpeedPID.enableAWU(false);
-    //rightSpeedPID.setTunings(1, 0.002, 25, 0);//0.718591667  0.00125
-    rightSpeedPID.setTunings(1, 0.0, 0, 0);//0.718591667  0.00125
-    rightSpeedPID.enableAWU(false);
-     */
     translationPID.setTunings(2.78,0,30,0);//2.78,0,30,0
     translationPID.enableAWU(false);
+
     rotationPID.setTunings(3.38,0,0,0);  //4.8  0.00001  15.5
-    //rotationPID.setTunings(4,0,30,0);  //4.8  0.00001  15.5
     rotationPID.enableAWU(false);
 
 #endif
@@ -86,33 +100,18 @@ void MCS::initSettings() {
     controlSettings.tolerancySpeed = 10;
 
     /* rad */
-#if defined(MAIN)
     controlSettings.tolerancyAngle = 0.018;
-#elif defined(SLAVE)
-    controlSettings.tolerancyAngle = 0.018;
-#endif
 
     /* mm */
-#if defined(MAIN)
     controlSettings.tolerancyTranslation = 1;
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
-#elif defined(SLAVE)
-    controlSettings.tolerancyTranslation = 5;
-    controlSettings.tolerancyX=10;
-    controlSettings.tolerancyY=10;
-#endif
 
     /* ms */
     controlSettings.stopDelay = 25;
 
     /* mm/s */
-#if defined(MAIN)
-    controlSettings.tolerancyDerivative = 1;
-#elif defined(SLAVE)
-    //controlSettings.tolerancyDerivative = 10;
     controlSettings.tolerancyDerivative = 1; //à laisser très petit sinon le robot ne s'arrete pas
-#endif
 
     /* patate */
     controlSettings.tolerancyDifferenceSpeed = 500*2;
@@ -141,21 +140,7 @@ void MCS::setParameters(float parameters[]) {
 
     leftSpeedPID.setTunings(parameters[0], parameters[1], parameters[2], 0);
     rightSpeedPID.setTunings(parameters[3], parameters[4], parameters[5], 0);
-//    translationPID.setTunings(parameters[8], parameters[9], parameters[10], parameters[11]);
-//    translationPID.setTunings(parameters[3], parameters[4], parameters[5], 0);
-//    rotationPID.setTunings(parameters[12], parameters[13], parameters[14], parameters[15]);
-//    controlSettings.maxAcceleration = parameters[16];
-//    controlSettings.maxDeceleration = parameters[17];
-//    controlSettings.maxRotationSpeed = parameters[18];
-//    controlSettings.maxTranslationSpeed = parameters[19];
-//    controlSettings.tolerancySpeed = parameters[20];
-//    controlSettings.tolerancyAngle = parameters[21];
-//    controlSettings.tolerancyTranslation = parameters[22];
-//    controlSettings.tolerancyX = parameters[23];
-//    controlSettings.tolerancyY = parameters[24];
-//    controlSettings.stopDelay = parameters[25];
-//    controlSettings.tolerancyDerivative = parameters[26];
-//    controlSettings.tolerancyDifferenceSpeed = parameters[27];
+
 }
 
 void MCS::updatePositionOrientation() {
@@ -196,7 +181,6 @@ void MCS::updateSpeed(double deltaTime) {
         robotStatus.speedRotation = 0.0f;
     }
 
-
     robotStatus.speedTranslation = MAX(-controlSettings.maxTranslationSpeed,
                                        MIN(controlSettings.maxTranslationSpeed, robotStatus.speedTranslation));
     if (robotStatus.controlledRotation) {
@@ -223,6 +207,7 @@ void MCS::updateSpeed(double deltaTime) {
     previousLeftSpeedGoal = leftSpeedPID.getCurrentGoal();
     previousRightSpeedGoal = rightSpeedPID.getCurrentGoal();
 }
+
 void MCS::control(double deltaTime)
 {
     if(!robotStatus.controlled)
@@ -243,12 +228,6 @@ void MCS::control(double deltaTime)
     previousLeftTicks = leftTicks;
     previousRightTicks = rightTicks;
 
-#if defined(MAIN)
-//    digitalWrite(LED3, robotStatus.notMoving);
-#elif defined(SLAVE)
-//    digitalWrite(LED3_2, !robotStatus.notMoving);
-#endif
-
     if(gotoTimer > 0)
         gotoTimer--;
     if(robotStatus.inRotationInGoto  && robotStatus.notMoving && gotoTimer == 0) {//ABS(averageRotationDerivativeError.value()) <= controlSettings.tolerancyDerivative && ABS(rotationPID.getError())<=controlSettings.tolerancyAngle){
@@ -256,7 +235,6 @@ void MCS::control(double deltaTime)
         float dy = (targetY - robotStatus.y);
         float target = sqrtf(dx * dx + dy * dy);
 
-        //digitalWrite(LED2,HIGH);
         translate(target);
 
         // Serial.printf("Target is %f current angle is %f (dx=%f dy=%f) (x=%f y=%f)\n", target, getAngle(), dx, dy, robotStatus.x, robotStatus.y);
@@ -310,22 +288,14 @@ void MCS::manageStop() {
         rightMotor.setDirection(Direction::NONE);
         stop();
         robotStatus.stuck=true;
-#if defined(MAIN)
-        //digitalWrite(LED4,HIGH);
-#elif defined(SLAVE)
-        //digitalWrite(LED3_1,LOW);
-#endif
+
 
     }
 
 }
 
 void MCS::stop() {
-#if defined(MAIN)
-    //digitalWrite(LED2,HIGH);
-#elif defined(SLAVE)
-    //digitalWrite(LED2_1,LOW);
-#endif
+
     leftMotor.stop();
     rightMotor.stop();
 
@@ -400,23 +370,24 @@ void MCS::translate(int16_t amount) {
         robotStatus.notMoving = MovementStatus::MOVING;
         return;
     }
-/**#if defined (MAIN)
-    if (targetDistance <= 500) {
-        translationPID.setTunings(0,0,0,0);
-    }
-#endif **/
     robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
 
-/**#if defined (MAIN)
-    translationPID.setTunings(2.201,0,10,0);
-#endif **/
+#if(MAIN)
 
-    #if defined(MAIN)
-    //digitalWrite(LED2,LOW);
-#elif defined(SLAVE)
-    //digitalWrite(LED2_1,HIGH);
+   /** if(amount <=900 and amount >= 800) {
+        translationPID.setTunings(2.201,0.000025,0,0); //Asserv pour +80 cm/90cm
+        translationPID.enableAWU(false);
+        robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
+        translationPID.setGoal(amount + currentDistance);
+        robotStatus.notMoving = MovementStatus::MOVING;
+    } **/
+
+#elif (SLAVE)
+    robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
+        translationPID.setGoal(amount + currentDistance);
+        robotStatus.notMoving = MovementStatus::MOVING;
 #endif
 }
 
@@ -473,11 +444,7 @@ void MCS::rotate(float angle) {
 
     rotationPID.setGoal(targetAngle);
     robotStatus.notMoving = MovementStatus::MOVING;
-#if defined(MAIN)
-    //digitalWrite(LED2,LOW);
-#elif defined(SLAVE)
-    //digitalWrite(LED2_1,LOW);
-#endif
+
 }
 
 /*void MCS::gotoPoint(int16_t x, int16_t y, bool sequential) {

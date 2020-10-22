@@ -21,6 +21,7 @@ constexpr uint8_t INTERRUPT_PRINT_STACK_MAX_SIZE = 200;
 constexpr uint8_t NBR_OF_US_SENSOR = 0;
 constexpr uint8_t NBR_OF_DISTANCE_SENSOR = 6;
 constexpr uint8_t NBR_SICK_MEASUREMENTS = 100;
+
 #elif defined(SLAVE)
 constexpr uint8_t NBR_OF_US_SENSOR = 0;
 constexpr uint8_t NBR_OF_DISTANCE_SENSOR = 3;
@@ -71,8 +72,10 @@ constexpr float     COD_WHEEL_DIAMETER =        68.1363;  // Unité : mm 63.57  
 
 //distance roue codeuse pneu = 14.36mm
 
-constexpr float   DISTANCE_COD_GAUCHE_CENTRE = 173.650014570960268; // Unité : mm //171.175
-constexpr float   DISTANCE_COD_DROITE_CENTRE = 173.650014570960268; // Unité : mm //171.175
+constexpr float   DISTANCE_COD_GAUCHE_CENTRE = 173.65; // Unité : mm //171.175
+constexpr float   DISTANCE_COD_DROITE_CENTRE = 173.65; // Unité : mm //171.175
+
+
 #elif defined(SLAVE)
 constexpr uint16_t  TICKS_PER_TURN =            1024;   // Unité : ticks
 constexpr float     COD_WHEEL_DIAMETER =        68.1363;  // Unité : mm 63.57
