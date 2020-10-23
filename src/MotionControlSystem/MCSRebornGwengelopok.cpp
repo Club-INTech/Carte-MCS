@@ -384,10 +384,6 @@ void MCS::translate(int16_t amount) {
         robotStatus.notMoving = MovementStatus::MOVING;
     } **/
 
-#elif (SLAVE)
-    robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
-        translationPID.setGoal(amount + currentDistance);
-        robotStatus.notMoving = MovementStatus::MOVING;
 #endif
 }
 
