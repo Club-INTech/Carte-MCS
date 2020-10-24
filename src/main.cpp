@@ -78,8 +78,9 @@ BufferedData* stop(BufferedData& args){
 
 BufferedData* sendPositionUpdate(BufferedData& args){
 
-    BufferedData* returnData = new BufferedData(sizeof(float)*3 + sizeof(uint32_t) + sizeof(uint8_t));
+    BufferedData* returnData = new BufferedData(sizeof(float)*3 + sizeof(uint32_t) + sizeof(uint8_t)+sizeof(bool));
     MCS::Instance().sendPositionUpdate(returnData);
+
 
     return returnData;
 }

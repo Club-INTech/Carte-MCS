@@ -275,6 +275,7 @@ void MCS::manageStop() {
     && !robotStatus.forcedMovement) {
        // digitalWrite(LED0,LOW);
        // digitalWrite(LED1,LOW);
+        manageStopped = true;
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
         bool ElBooly = robotStatus.inRotationInGoto;
@@ -506,6 +507,7 @@ void MCS::sendPositionUpdate(BufferedData* returnData) {
      putData(robotStatus.orientation, returnData);
      putData<uint32_t>(adjustedMillis(), returnData);
      putData<uint8_t>(robotStatus.notMoving,returnData);
+     putData(manageStopped,returnData);
 
 }
 

@@ -70,6 +70,7 @@ private:
 
 
     bool sequentialMovement;
+    bool manageStopped = false;
 
     // Timer entre translation et rotation pour les goto
     uint32_t gotoTimer;
