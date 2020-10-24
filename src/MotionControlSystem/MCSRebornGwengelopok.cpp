@@ -30,10 +30,10 @@ void MCS::init() {
     rightSpeedPID.setTunings(0.2827, 0, 0, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false); //Asserv pour 1m **/
 
-    leftSpeedPID.setTunings(0.218, 0, 15, 0); //0.260, 0, 10, 0          FuséeTime : 0.001
-    leftSpeedPID.enableAWU(false);
-    rightSpeedPID.setTunings(0.235, 0, 15, 0); //0.295, 0, 10, 0
-    rightSpeedPID.enableAWU(false);
+    leftSpeedPID.setTunings(0.224, 0.00201, 40, 17500); //0.260, 0, 10, 0          FuséeTime : 0.001
+    leftSpeedPID.enableAWU(true);
+    rightSpeedPID.setTunings(0.235, 0.002, 40, 17500); //0.295, 0, 10, 0            17500
+    rightSpeedPID.enableAWU(true);
 
     /**leftSpeedPID.setTunings(0.218, 0, 15, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
@@ -54,10 +54,10 @@ void MCS::init() {
     //translationPID.setTunings(2.498,0,30,0); //Asserv de 530 inclus à 550 exclus
     //translationPID.setTunings(2.55,0,30,0);//Asserv pour +550 mm
 
-    translationPID.setTunings(0.5,0,0,0);
+    translationPID.setTunings(0.885,0.00001,13,0);
     translationPID.enableAWU(false);
 
-    rotationPID.setTunings(0,0,0,0);
+    rotationPID.setTunings(3.5,0,3,0);
     rotationPID.enableAWU(false);
 
     /****/
@@ -104,6 +104,7 @@ void MCS::initSettings() {
 
     /* mm */
     controlSettings.tolerancyTranslation = 1;
+
     controlSettings.tolerancyX=10;
     controlSettings.tolerancyY=10;
 
@@ -245,6 +246,8 @@ void MCS::control(double deltaTime)
 
 void MCS::manageStop() {
     static int timeCounter =0;
+    //pinMode(LED0,OUTPUT);
+    //pinMode(LED1,OUTPUT);
 
     averageRotationDerivativeError.add(rotationPID.getDerivativeError());
     averageTranslationDerivativeError.add(translationPID.getDerivativeError());
@@ -254,6 +257,8 @@ void MCS::manageStop() {
     && ABS(averageRotationDerivativeError.value())<=controlSettings.tolerancyDerivative
     && ABS(rotationPID.getCurrentState()-rotationPID.getCurrentGoal())<=controlSettings.tolerancyAngle
     && !robotStatus.forcedMovement) {
+       // digitalWrite(LED0,LOW);
+       // digitalWrite(LED1,LOW);
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
         bool ElBooly = robotStatus.inRotationInGoto;
@@ -282,7 +287,7 @@ void MCS::manageStop() {
         timeCounter=0;
     }
 
-//    digitalWrite(LED3,robotStatus.notMoving);
+ //   digitalWrite(LED3,robotStatus.notMoving);
     if(ABS(ABS(leftSpeedPID.getCurrentState())-ABS(rightSpeedPID.getCurrentState()))>controlSettings.tolerancyDifferenceSpeed && !robotStatus.notMoving){          //si le robot a une seule roue bloquée
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
@@ -374,17 +379,6 @@ void MCS::translate(int16_t amount) {
     translationPID.setGoal(amount + currentDistance);
     robotStatus.notMoving = MovementStatus::MOVING;
 
-#if(MAIN)
-
-   /** if(amount <=900 and amount >= 800) {
-        translationPID.setTunings(2.201,0.000025,0,0); //Asserv pour +80 cm/90cm
-        translationPID.enableAWU(false);
-        robotStatus.movement = amount > 0 ? MOVEMENT::FORWARD : MOVEMENT::BACKWARD;
-        translationPID.setGoal(amount + currentDistance);
-        robotStatus.notMoving = MovementStatus::MOVING;
-    } **/
-
-#endif
 }
 
 void MCS::rotate(float angle) {
@@ -404,33 +398,6 @@ void MCS::rotate(float angle) {
 
         differenceAngle = robotStatus.orientation-targetAngle;
     }
-/**
-#if defined(MAIN)
-
-    if(1.57<ABS(differenceAngle)) {
-        rotationPID.setTunings(3.5,0.000001,0,0);
-    }
-    else if (0.75<ABS(differenceAngle) and ABS(differenceAngle)<=1.57) {
-        rotationPID.setTunings(5.1,0.000001,0,0);
-    }
-    else {
-        rotationPID.setTunings(9,0.000001,0,0);
-    }
-
-#elif defined(SLAVE)
-
-    if((1<=ABS(differenceAngle) and ABS(differenceAngle)<1.5)){
-        //rotationPID.setTunings(7.74,0.000001,0,0);
-        rotationPID.setTunings(-5.4*ABS(differenceAngle)+13.07,0.000001,0,0);
-    }
-    else if(ABS(differenceAngle)>=1.5){
-        rotationPID.setTunings(-1.15*ABS(differenceAngle)+7.23,0.000001,0,0);
-    }
-    else{
-        rotationPID.setTunings(-13.54*ABS(differenceAngle)+20.53,0.000001,10,0);
-    }
-
-#endif **/
 
     if( ! rotationPID.active) {
         rotationPID.fullReset();

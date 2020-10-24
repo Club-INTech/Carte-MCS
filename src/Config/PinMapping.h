@@ -21,6 +21,11 @@ constexpr uint8_t INB_LEFT = 3;//PD3
 constexpr uint8_t INA_RIGHT = 11;//PB3
 constexpr uint8_t INB_RIGHT = 10;//PB2
 
+// LED
+
+constexpr uint8_t LED0 = 14;//PC0
+constexpr uint8_t LED1 = 15;//PC1
+
 
 #elif defined(SLAVE)
 
