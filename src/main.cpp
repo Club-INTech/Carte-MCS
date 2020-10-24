@@ -68,8 +68,6 @@ BufferedData* gotoPoint(BufferedData& args){
 }
 
 BufferedData* stop(BufferedData& args){
-
-
     MCS::Instance().stop();
 
     return nullptr;
