@@ -24,7 +24,7 @@ struct RobotStatus
     bool inRotationInGoto;
     bool inGoto;
     bool forcedMovement;
-    MovementStatus notMoving;
+    bool notMoving;
     bool stuck;
 
     float x;

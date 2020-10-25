@@ -74,7 +74,7 @@ void MCS::init() {
     translationPID.setTunings(0.885,0.00001,13,0);
     translationPID.enableAWU(false);
 
-    rotationPID.setTunings(3.5,0,3,0);
+    rotationPID.setTunings(2,0,13,0);
     rotationPID.enableAWU(false);
 
     /****/
@@ -269,13 +269,14 @@ void MCS::initManageStopped () {
     manageStopped = false;
 }
 
-void MCS::manageStop() {
+/**void MCS::manageStop() {
     //pinMode(LED0,OUTPUT);
     //pinMode(LED1,OUTPUT);
-    float differenceAngle = robotStatus.orientation-targetAngle;
+    static int timeCounter =0;
+    float differenceAngle = ABS(robotStatus.orientation-targetAngle);
     averageRotationDerivativeError.add(rotationPID.getDerivativeError());
     averageTranslationDerivativeError.add(translationPID.getDerivativeError());
-    if((targetDistance != 0 || differenceAngle != 0)
+    if((targetDistance != 0 || differenceAngle != 0 )
     && ABS(averageTranslationDerivativeError.value())<= controlSettings.tolerancyDerivative
     && ABS(translationPID.getCurrentState()-translationPID.getCurrentGoal())<=controlSettings.tolerancyTranslation
     && ABS(averageRotationDerivativeError.value())<=controlSettings.tolerancyDerivative
@@ -285,16 +286,16 @@ void MCS::manageStop() {
        // digitalWrite(LED1,LOW);
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
-       /** bool ElBooly = robotStatus.inRotationInGoto;
+        bool ElBooly = robotStatus.inRotationInGoto;
         if(robotStatus.inRotationInGoto) {
             gotoTimer = MIN_TIME_BETWEEN_GOTO_TR_ROT;
-        }**/
+        }
         stop();
         manageStopped = true;
-        //robotStatus.inRotationInGoto = ElBooly;
+        robotStatus.inRotationInGoto = ElBooly;
     }
 
-    /**if((ABS(leftSpeedPID.getCurrentState())<0.4*ABS(leftSpeedPID.getCurrentGoal())) && ABS((rightSpeedPID.getCurrentState())<0.4*ABS(rightSpeedPID.getCurrentGoal())) && !robotStatus.notMoving && expectedWallImpact){          //si robot a les deux roues bloquées
+    if((ABS(leftSpeedPID.getCurrentState())<0.4*ABS(leftSpeedPID.getCurrentGoal())) && ABS((rightSpeedPID.getCurrentState())<0.4*ABS(rightSpeedPID.getCurrentGoal())) && !robotStatus.notMoving && expectedWallImpact){          //si robot a les deux roues bloquées
         if (timeCounter==100) {
             robotStatus.controlledRotation = true;
 
@@ -310,19 +311,141 @@ void MCS::manageStop() {
     }
     else {
         timeCounter=0;
-    }**/
+    }
 
  //   digitalWrite(LED3,robotStatus.notMoving);
-    /**if(ABS(ABS(leftSpeedPID.getCurrentState())-ABS(rightSpeedPID.getCurrentState()))>controlSettings.tolerancyDifferenceSpeed && !robotStatus.notMoving){          //si le robot a une seule roue bloquée
+    if(ABS(ABS(leftSpeedPID.getCurrentState())-ABS(rightSpeedPID.getCurrentState()))>controlSettings.tolerancyDifferenceSpeed && !robotStatus.notMoving){          //si le robot a une seule roue bloquée
         leftMotor.setDirection(Direction::NONE);
         rightMotor.setDirection(Direction::NONE);
         stop();
         robotStatus.stuck=true;
 
 
-    }**/
+    }
 
-}
+} **/
+
+void MCS::manageStop() {
+    static int timeCounter =0;
+    static int timeCounter2 =0;
+    static bool blocked = false;
+
+
+    if(robotStatus.controlledTranslation || robotStatus.controlledRotation) {
+        averageRotationDerivativeError.add(rotationPID.getDerivativeError());
+        averageTranslationDerivativeError.add(translationPID.getDerivativeError());
+        if (!robotStatus.notMoving && !robotStatus.inGoto &&
+            ABS(averageTranslationDerivativeError.value()) <= controlSettings.tolerancyDerivative &&
+            ABS(translationPID.getCurrentState() - translationPID.getCurrentGoal()) <=
+            controlSettings.tolerancyTranslation && (
+                    (ABS(averageRotationDerivativeError.value()) <= controlSettings.tolerancyDerivative &&
+                     ABS(rotationPID.getCurrentState() - rotationPID.getCurrentGoal()) <=
+                     controlSettings.tolerancyAngle) || expectedWallImpact)) {
+            leftMotor.setDirection(Direction::NONE);
+            rightMotor.setDirection(Direction::NONE);
+            bool ElBooly = robotStatus.inRotationInGoto;
+            if (robotStatus.inRotationInGoto) {
+                gotoTimer = MIN_TIME_BETWEEN_GOTO_TR_ROT;
+            }
+//            digitalWrite(LED3_3, LOW);
+
+            stop();
+            robotStatus.inRotationInGoto = ElBooly;
+
+        }
+           if (ABS(robotStatus.speedLeftWheel) <= controlSettings.tolerancySpeed &&
+               ABS(robotStatus.speedRightWheel) <= controlSettings.tolerancySpeed &&
+               ABS(robotStatus.speedTranslation - robotStatus.speedRotation) <= 1 &&
+               ABS(robotStatus.speedTranslation + robotStatus.speedRotation) <= 1 &&
+               ABS(leftSpeedPID.getDerivativeError()) <= controlSettings.tolerancyDerivative &&
+               ABS(rightSpeedPID.getDerivativeError()) <= controlSettings.tolerancyDerivative &&
+               leftSpeedPID.active && rightSpeedPID.active) {
+   //            digitalWrite(LED3_2, LOW);
+               robotStatus.controlled = false;
+               stop();
+               robotStatus.notMoving = true;
+               robotStatus.inGoto = false;
+           }
+
+        if (
+                (ABS(robotStatus.speedLeftWheel) < 0.1 * ABS(leftSpeedPID.getCurrentGoal())) &&
+                ABS(robotStatus.speedRightWheel) < 0.1 * ABS(rightSpeedPID.getCurrentGoal())
+                && !robotStatus.notMoving) {
+
+//            digitalWrite(LED3_3, LOW);
+            if (timeCounter >= 50) {
+                robotStatus.stuck = true;
+                robotStatus.notMoving = true;
+                blocked = true;
+                stop();
+                robotStatus.controlled = false;
+                leftMotor.setDirection(Direction::NONE);
+                rightMotor.setDirection(Direction::NONE);
+                //InterruptStackPrint::Instance().push("blocage symétrique");
+                timeCounter = 0;
+            } else {
+                timeCounter++;
+            }
+        } else {
+//            digitalWrite(LED3_3, HIGH);
+            timeCounter = 0;
+        }
+
+
+        if (blocked) {
+            if (timeCounter2 == 100) {
+                stop();
+                translationPID.setGoal(currentDistance - 1);
+                leftMotor.setDirection(Direction::NONE);
+                rightMotor.setDirection(Direction::NONE);
+                expectedWallImpact = false;
+                blocked = false;
+            } else {
+                timeCounter2++;
+            }
+        }
+         if(ABS(ABS(leftSpeedPID.getCurrentState() - leftSpeedPID.getCurrentGoal()) - ABS(rightSpeedPID.getCurrentState() - rightSpeedPID.getCurrentGoal())) > 200 && !expectedWallImpact && !robotStatus.notMoving) {
+        robotStatus.stuck = true;
+        robotStatus.notMoving = true;
+        leftMotor.setDirection(Direction::NONE);
+        rightMotor.setDirection(Direction::NONE);
+        stop();
+        translationPID.setGoal(currentDistance-20);
+//            digitalWrite(LED3_3, LOW);
+         }
+
+        if((ABS(leftSpeedPID.getCurrentState())<0.4*ABS(leftSpeedPID.getCurrentGoal())) && ABS((rightSpeedPID.getCurrentState())<0.4*ABS(rightSpeedPID.getCurrentGoal())) && !robotStatus.notMoving && expectedWallImpact){          //si robot a les deux roues bloquées
+            if (timeCounter==100) {                           //permet d'empêcher le blocage au démarrage
+                robotStatus.controlledRotation = true;
+                leftMotor.setDirection(Direction::NONE);
+                rightMotor.setDirection(Direction::NONE);
+                expectedWallImpact = false;
+                timeCounter = 0;
+                robotStatus.stuck = true;
+////            InterruptStackPrint::Instance().push("blocage symétrique");
+                stop();
+            }
+            timeCounter++;
+        }
+        else {
+            timeCounter=0;
+        }
+
+
+//    digitalWrite(LED3,robotStatus.moving);
+        if(ABS(ABS(leftSpeedPID.getCurrentState())-ABS(rightSpeedPID.getCurrentState()))>controlSettings.tolerancyDifferenceSpeed && !robotStatus.notMoving){          //si le robot a une seule roue bloquée
+            leftMotor.setDirection(Direction::NONE);
+            rightMotor.setDirection(Direction::NONE);
+            stop();
+            robotStatus.stuck=true;
+
+        }
+        if(translationPID.getDerivativeError()==0 && ABS(translationPID.getCurrentOutput()-translationPID.getCurrentGoal())<=controlSettings.tolerancyTranslation && rotationPID.getDerivativeError()==0 && ABS(rotationPID.getCurrentOutput()-rotationPID.getCurrentGoal())<=controlSettings.tolerancyAngle){
+            leftMotor.setDirection(Direction::NONE);
+            rightMotor.setDirection(Direction::NONE);
+            //digitalWrite(LED1,HIGH);
+        }
+    } }
 
 void MCS::stop() {
 
@@ -409,6 +532,7 @@ void MCS::translate(int16_t amount) {
 void MCS::rotate(float angle) {
     rotationPID.active = false;
     if(!robotStatus.controlledRotation){
+        manageStop();
         return;
     }
     targetAngle = angle;
@@ -432,6 +556,11 @@ void MCS::rotate(float angle) {
 
     rotationPID.setGoal(targetAngle);
     robotStatus.notMoving = MovementStatus::MOVING;
+    manageStop();
+    digitalWrite(INA_RIGHT, LOW);
+    digitalWrite(INB_RIGHT, LOW);
+    digitalWrite(INA_LEFT, LOW);
+    digitalWrite(INB_LEFT, LOW);
 
 }
 
@@ -516,8 +645,6 @@ void MCS::sendPositionUpdate(BufferedData* returnData) {
      putData<uint32_t>(adjustedMillis(), returnData);
      putData<uint8_t>(robotStatus.notMoving,returnData);
      putData<bool>(manageStopped,returnData);
-
-
 
 }
 
