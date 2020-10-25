@@ -70,14 +70,17 @@ private:
 
 
     bool sequentialMovement;
-    bool manageStopped = false;
 
     // Timer entre translation et rotation pour les goto
     uint32_t gotoTimer;
+    bool manageStopped ;
 
 
 public:
     MCS();
+
+    void setManageStopped(bool manageStopped);
+    void initManageStopped();
 
     void initEncoders();
 
@@ -130,6 +133,7 @@ public:
 
     void getSpeedGoals(long&,long&);
 
+
     /**
      * Permet de définir une rotation à la fin d'un mouvement (au lieu de devoir attendre la fin du mouvement et de donner un ordre de rotation)
      * /!\\ Cette valeur est réinitialisée dès la fin du mouvement!!! (Histoire de pas se décaler avec les mouvements suivants)
@@ -161,6 +165,7 @@ public:
 
     Motor leftMotor;
     Motor rightMotor;
+
 };
 
 #endif //LL_MCSREBORN_H

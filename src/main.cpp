@@ -80,9 +80,11 @@ BufferedData* sendPositionUpdate(BufferedData& args){
 
     BufferedData* returnData = new BufferedData(sizeof(float)*3 + sizeof(uint32_t) + sizeof(uint8_t)+sizeof(bool));
     MCS::Instance().sendPositionUpdate(returnData);
-
-
+    bool manageStopped ;
+    I2CC::getData<bool>(manageStopped, &args);
+    MCS::Instance().setManageStopped(manageStopped);
     return returnData;
+
 }
 
 BufferedData* translate(BufferedData& args){
