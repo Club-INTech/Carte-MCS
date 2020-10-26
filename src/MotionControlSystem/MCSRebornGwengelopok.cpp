@@ -24,7 +24,7 @@ void MCS::init() {
 
 
 #if defined(MAIN)
-
+/**
   /**  leftSpeedPID.setTunings(0.270, 0, 0, 0); //0.260, 0, 10, 0
     leftSpeedPID.enableAWU(false);
 
@@ -74,7 +74,7 @@ void MCS::init() {
     translationPID.setTunings(0.885,0.00001,13,0);
     translationPID.enableAWU(false);
 
-    rotationPID.setTunings(2,0,13,0);
+    rotationPID.setTunings(2,0,3,0); //2.3 0.0001 0
     rotationPID.enableAWU(false);
 
     /****/
@@ -324,6 +324,7 @@ void MCS::initManageStopped () {
     }
 
 } **/
+
 
 void MCS::manageStop() {
     static int timeCounter =0;
