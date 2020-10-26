@@ -89,7 +89,7 @@ void MCS::init() {
     translationPID.setTunings(2.78,0,30,0);//2.78,0,30,0
     translationPID.enableAWU(false);
 
-    rotationPID.setTunings(3.38,0,0,0);  //4.8  0.00001  15.5
+    rotationPID.setTunings(3.38,0,0,0);  //3.38  0  0
     rotationPID.enableAWU(false);
 
 #endif
