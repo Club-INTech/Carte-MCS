@@ -306,12 +306,10 @@ void setup(){
     // Active les interrupts pour les changements sur les pins des codeuses
     PCICR |= (1 << PCIE2) | (1 << PCIE0);    // Active les changements sur les pins D0 à D7
 
-#if defined(MAIN)
+
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT23) | (1 << PCINT22);  // On veut juste les pins des codeuses
     PCMSK0 |= (1 << PCINT0);
-#elif defined(SLAVE)
-    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19) | (1 << PCINT23) | (1 << PCINT20);  // On veut juste les pins des codeuses
-#endif
+
 
 //    PCICR = 5;
 //    PCMSK2 = 149;
