@@ -47,9 +47,9 @@ void MCS::init() {
     rightSpeedPID.setTunings(0.2827, 0, 0, 0); //0.295, 0, 10, 0
     rightSpeedPID.enableAWU(false); //Asserv pour 1m **/
 
-    leftSpeedPID.setTunings(0.224, 0.00201, 40, 17500); //0.260, 0, 10, 0          FuséeTime : 0.001
+    leftSpeedPID.setTunings(0.088, 0.00240, 0, 8000); //0.260, 0, 10, 0          FuséeTime : 0.001
     leftSpeedPID.enableAWU(true);
-    rightSpeedPID.setTunings(0.235, 0.002, 40, 17500); //0.295, 0, 10, 0            17500
+    rightSpeedPID.setTunings(0.120, 0.00180, 0, 8000); //0.295, 0, 10, 0            17500
     rightSpeedPID.enableAWU(true);
 
     /**leftSpeedPID.setTunings(0.218, 0, 15, 0); //0.260, 0, 10, 0
