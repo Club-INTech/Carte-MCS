@@ -80,13 +80,13 @@ void MCS::init() {
     /****/
 
 #elif defined(SLAVE)
-    leftSpeedPID.setTunings(0.375, 0.00007, 10, 0);//0.375, 0.00007, 10, 0      0.38
+    leftSpeedPID.setTunings(0.370, 0.0001, 30, 0);//0.375, 0.00007, 10, 0      0.38
     leftSpeedPID.enableAWU(false);
 
-    rightSpeedPID.setTunings(0.335, 0.00003, 10, 0);//0.335, 0.00003, 10, 0        0.34
+    rightSpeedPID.setTunings(0.335, 0.0001, 30, 0);//0.335, 0.00003, 10, 0        0.34
     rightSpeedPID.enableAWU(false);
 
-    translationPID.setTunings(2.78,0,30,0);//2.78,0,30,0
+    translationPID.setTunings(1,0,0,0);//2.78,0,30,0
     translationPID.enableAWU(false);
 
     rotationPID.setTunings(3.38,0,0,0);  //3.38  0  0

@@ -8,8 +8,6 @@
 
 
 
-
-
 #if(MAIN)
 
 constexpr uint8_t ENCODER_LEFT_A = 8;//PB0
@@ -27,18 +25,18 @@ constexpr uint8_t INB_RIGHT = 10;//PB2
 
 #elif(SLAVE)
 
-constexpr uint8_t ENCODER_LEFT_A = 6;//PB0
-constexpr uint8_t ENCODER_LEFT_B = 2;//PD7
-constexpr uint8_t ENCODER_RIGHT_A = 7;//PD2
-constexpr uint8_t ENCODER_RIGHT_B = 8;//PD6
+constexpr uint8_t ENCODER_LEFT_A =2;//PB0
+constexpr uint8_t ENCODER_LEFT_B = 6;//PD7
+constexpr uint8_t ENCODER_RIGHT_A = 8;//PD2
+constexpr uint8_t ENCODER_RIGHT_B = 7;//PD6
 
 // Moteurs
-constexpr uint8_t INA_LEFT = 10;//PD3
-constexpr uint8_t INB_LEFT = 11;//PB1
+constexpr uint8_t INA_LEFT = 11;//PD3
+constexpr uint8_t INB_LEFT = 10;//PB1
 
 
-constexpr uint8_t INA_RIGHT = 3;//PB2
-constexpr uint8_t INB_RIGHT = 9;//PB3
+constexpr uint8_t INA_RIGHT = 9;//PB2
+constexpr uint8_t INB_RIGHT = 3;//PB3
 
 #endif
 
