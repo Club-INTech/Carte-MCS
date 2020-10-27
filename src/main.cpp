@@ -274,6 +274,15 @@ BufferedData* expectedWallImpact(BufferedData& args) {
     MCS::Instance().expectWallImpact();
 }
 
+BufferedData* refreshInit(BufferedData& args) {
+//    InitAllPins();
+    MCS::Instance().init();
+//    pinMode(A0, OUTPUT);
+//    pinMode(A1, OUTPUT);
+}
+
+
+
 void ControlInterruptHandler(double deltaTime) {
     MCS::Instance().control(deltaTime);
     MCS::Instance().manageStop();
@@ -349,6 +358,7 @@ void setup(){
     registerRPC(getRawPosDataSpeed, 25);
     registerRPC(getRawPosDataPos, 26);
     registerRPC(expectedWallImpact, 27);
+    registerRPC(refreshInit, 28);
 
 
     startI2CC(1, false);
